@@ -13,8 +13,8 @@ const SignUp = () => {
   // 2. Render Layout
   return (
     <div ref={pageRef} className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-      <SignUpForm cardRef={cardRef} />
       <AuthHero />
+      <SignUpForm cardRef={cardRef} />
     </div>
   );
 };
