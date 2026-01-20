@@ -1,34 +1,20 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Flip, ToastContainer } from "react-toastify";
 
-// import "./App.css";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
-
-
+import GenerateImage from "./pages/GenerateImage";
 function App() {
   return (
-    <BrowserRouter>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Flip}
-      />
+    <>
+      <ToastContainer transition={Flip} />
       <Routes>
-        <Route path="/" element={<div>Home</div>}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/register" element={<SignUp />}></Route>
+        <Route path="/" element={<div>Home</div>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<SignUp />} />
+        <Route path="/image/generate" element={<GenerateImage />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 

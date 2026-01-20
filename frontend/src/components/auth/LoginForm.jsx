@@ -32,11 +32,12 @@ const LoginForm = ({ cardRef }) => {
 
     try {
       const res = await signIn(data);
-      localStorage.setItem("token", res.data.token);
+      
 
+      localStorage.setItem("token", res.data.token);
       toast.success("Welcome back!");
-      reset();
-      navigate("/");
+      // reset();
+      // navigate("/");
     } catch (error) {
       const message =
         error.response?.data?.message ??
@@ -63,9 +64,7 @@ const LoginForm = ({ cardRef }) => {
           <h2 className="text-3xl font-semibold tracking-tight text-gray-900">
             Welcome back
           </h2>
-          <p className="mt-2 text-sm text-gray-500">
-            Sign in to your account
-          </p>
+          <p className="mt-2 text-sm text-gray-500">Sign in to your account</p>
         </div>
 
         <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
