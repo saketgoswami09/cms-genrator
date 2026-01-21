@@ -36,8 +36,8 @@ const LoginForm = ({ cardRef }) => {
 
       localStorage.setItem("token", res.data.token);
       toast.success("Welcome back!");
-      // reset();
-      // navigate("/");
+      reset();
+      navigate("/");
     } catch (error) {
       const message =
         error.response?.data?.message ??
