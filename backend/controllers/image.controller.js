@@ -5,7 +5,6 @@ const { InferenceClient } = require("@huggingface/inference");
 
 const RESOLUTION_MAP = require("../constant");
 const Image = require("../models/image.model");
-const User = require("../models/auth.model");
 
 const client = new InferenceClient(process.env.HF_TOKEN);
 

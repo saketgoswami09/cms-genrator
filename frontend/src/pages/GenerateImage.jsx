@@ -60,6 +60,25 @@ export default function GenerateImage() {
     setError(null);
     reset();
   };
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(generatedImages);
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "generated-image.png"; // 👈 filename
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download failed", err);
+    }
+  };
 
   return (
     <div
@@ -162,15 +181,13 @@ export default function GenerateImage() {
 
               <div className="flex gap-3">
                 {/* Download */}
-                <a
-                  href={generatedImages}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={handleDownload}
                   className="flex-1 text-center rounded-xl border border-gray-300 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
                 >
                   Download
-                </a>
+                </button>
+
 
                 {/* Generate New */}
                 <button
