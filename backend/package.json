@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/genai": "^1.38.0",
     "@huggingface/inference": "^4.13.9",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.9.0",

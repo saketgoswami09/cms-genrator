@@ -69,7 +69,7 @@ export default function GenerateImage() {
       const link = document.createElement("a");
 
       link.href = url;
-      link.download = "generated-image.png"; // 👈 filename
+      link.download = "generated-image.png"; 
       document.body.appendChild(link);
       link.click();
 
