@@ -60,7 +60,7 @@ const AuthHero = () => {
           </div>
           <h1 className="hero-text text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
             Build faster. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-400">
               Launch smarter.
             </span>
           </h1>

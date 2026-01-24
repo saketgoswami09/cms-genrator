@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Rewrite from "./pages/Rewrite";
 import ContentHistory from "./pages/ContentHistory";
 import ImageHistory from "./components/ui/ImageHistory";
+// import Nav from "./components/nav/Nav";
 function App() {
   return (
     <>
