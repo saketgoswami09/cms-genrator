@@ -1,7 +1,7 @@
-
 require("dotenv").config();
 const cloudinary = require("cloudinary").v2;
 const { InferenceClient } = require("@huggingface/inference");
+const moongoose = require("mongoose");
 
 const RESOLUTION_MAP = require("../constant");
 const Image = require("../models/image.model");
@@ -30,10 +30,8 @@ exports.generateImage = async (req, res) => {
     }
 
     // Resolution
-    const dimension =
-      RESOLUTION_MAP[resolution] ||
-      RESOLUTION_MAP["1024x1024"] ||
-      { width: 1024, height: 1024 };
+    const dimension = RESOLUTION_MAP[resolution] ||
+      RESOLUTION_MAP["1024x1024"] || { width: 1024, height: 1024 };
 
     //  Generate Image
     const imageBlob = await client.textToImage({
@@ -57,7 +55,7 @@ exports.generateImage = async (req, res) => {
     const savedImage = await Image.create({
       prompt,
       image_url: uploadResult?.url,
-      user_id: req.user.userId ,
+      user_id: req.user.userId,
     });
 
     //  Response
@@ -65,7 +63,6 @@ exports.generateImage = async (req, res) => {
       message: "Image generated successfully",
       image: savedImage,
     });
-
   } catch (error) {
     console.error("Image generation failed:", error);
     return res.status(500).json({
@@ -87,8 +84,45 @@ function uploadImage(buffer) {
         (error, result) => {
           if (error) return reject(error);
           resolve(result);
-        }
+        },
       )
       .end(buffer);
   });
 }
+
+exports.history = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    console.log(`Start processing image history request for user ${userId}`);
+
+    const images = await Image.aggregate([
+      {
+        $match: {
+          user_id: new moongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $project: {
+          user_id: 1,
+          url: "$image_url",
+          prompt: 1,
+          createdAt: 1,
+        },
+      },
+      { $sort: { createdAt: -1 } },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: images,
+    });
+  } catch (error) {
+    console.error("Failed to fetch image history:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch image history",
+      error: error.message,
+    });
+  }
+};
