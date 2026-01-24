@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import GenerateImage from "./pages/GenerateImage";
 import Home from "./pages/Home";
 import Rewrite from "./pages/Rewrite";
+import ContentHistory from "./pages/ContentHistory";
 import ImageHistory from "./components/ui/ImageHistory";
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/register" element={<SignUp />} />
         <Route path="/image/generate" element={<GenerateImage />} />
         <Route path="/content/rewrite" element={<Rewrite />} />
+        <Route path="/content/history" element={<ContentHistory />} />
         <Route path="/image/history" element={<ImageHistory />} />
       </Routes>
     </>

@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import LoginForm from "../components/auth/LoginForm";
-import AuthHeroVideo from "../components/auth/AuthHeroVideo";
+import AuthHero from "../components/auth/AuthHero";
 import { useLoginAnimation } from "../components/hooks/useLoginAnimation";
 
 const Login = () => {
@@ -11,7 +11,7 @@ const Login = () => {
 
   return (
     <div ref={pageRef} className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-      <AuthHeroVideo />
+      <AuthHero />
       <LoginForm cardRef={cardRef} />
     </div>
   );

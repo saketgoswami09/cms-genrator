@@ -61,7 +61,7 @@ export default function ImageHistory({ refreshTrigger }) {
 
         const formatted = res.data.data.map((item) => ({
           id: item._id,
-          url: item.imageUrl,
+          url: item.image_url,
           prompt: item.prompt,
           resolution: item.resolution,
           rawDate: item.createdAt, // Keep raw for sorting

@@ -95,7 +95,7 @@ exports.history = async (req, res) => {
     const userId = req.user.userId;
 
     console.log(`Start processing image history request for user ${userId}`);
-
+    
     const images = await Image.aggregate([
       {
         $match: {
@@ -105,7 +105,7 @@ exports.history = async (req, res) => {
       {
         $project: {
           user_id: 1,
-          url: "$image_url",
+          image_url: "$image_url",
           prompt: 1,
           createdAt: 1,
         },
