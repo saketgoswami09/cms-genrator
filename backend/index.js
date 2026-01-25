@@ -16,14 +16,13 @@ db();
 // 🌐 CORS
 app.use(
   cors({
-    origin: "https://cms-genrator.vercel.app",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: [
+      "http://localhost:5173",
+      "https://cms-genrator.vercel.app",
+    ],
     credentials: true,
-  }),
+  })
 );
-
-app.options("*", cors());
 
 // 🧠 Body parser
 app.use(express.json());
