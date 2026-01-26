@@ -12,65 +12,77 @@ const ai = new GoogleGenAI({
 // ===============================
 exports.rewriteContent = async (req, res) => {
   try {
-    // 🔐 Auth guard
     if (!req.user?.userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const { content, tone } = req.body;
 
-    // ✅ Validation
-    if (!content) {
+    if (!content || content.trim().length === 0) {
       return res.status(400).json({ message: "Content is required" });
     }
 
-    // 🧠 Dynamic Prompt based on Tone
+    // 🔒 Token safety (VERY important on free tier)
+    const MAX_CHARS = 1200;
+    const safeContent = content.slice(0, MAX_CHARS);
+
     const selectedTone = tone || "Professional";
+
     const prompt = `
-      Rewrite the following content.
-      
-      Tone: ${selectedTone}
-      
-      Rules:
-      - Keep the meaning the same
-      - Improve grammar, clarity, and flow
-      - Return ONLY the rewritten content
-      - Do NOT explain or include quotes
-      
-      Content:
-      ${content}
+Rewrite the following content.
+
+Tone: ${selectedTone}
+
+Rules:
+- Keep the meaning the same
+- Improve grammar, clarity, and flow
+- Return ONLY the rewritten content
+- No explanations, no quotes
+
+Content:
+${safeContent}
     `;
 
-    // 🤖 Gemini call
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash", // Updated to latest stable model
+      model: "gemini-2.0-flash", // ✅ match dashboard
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
-    const rewrittenText = response.data.candidates[0].content.parts[0].text.trim();
+    const rewrittenText =
+      response?.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
-    // 💾 Save to MongoDB (Using your specific Schema fields)
+    if (!rewrittenText) {
+      throw new Error("Empty response from AI");
+    }
+
     const savedContent = await Content.create({
       user_id: req.user.userId,
-      input_content: content,      // Matches Schema: input_content
-      output_content: rewrittenText, // Matches Schema: output_content
-      tone: selectedTone,          // Matches Schema: tone (Make sure to add this to your Model!)
+      input_content: safeContent,
+      output_content: rewrittenText,
+      tone: selectedTone,
       type: "rewrite",
     });
 
-    // 🚀 Response
     return res.status(201).json({
       success: true,
       message: "Content rewritten successfully",
-      content: savedContent.output_content, 
-      data: savedContent // Return full object for history updates
+      content: savedContent.output_content,
+      data: savedContent,
     });
-
   } catch (error) {
     console.error("Rewrite failed:", error);
+
+    // 🔥 Exact check for Gemini's 429 Error
+    if (error.status === 429 || error.message?.includes("Quota exceeded") || error.message?.includes("429")) {
+      return res.status(429).json({
+        success: false,
+        message: "AI thoda thak gaya hai (Limit Reached). Please 30 seconds baad try karein.",
+      });
+    }
+
     return res.status(500).json({
-      message: "Rewrite failed",
-      error: error.message,
+      success: false,
+      message: "Something went wrong on our side.",
     });
   }
 };
@@ -86,13 +98,13 @@ exports.getContentHistory = async (req, res) => {
 
     // Map fields if your Frontend expects "original/result"
     // but your DB has "input_content/output_content"
-    const formattedHistory = history.map(item => ({
-        _id: item._id,
-        user_id: item.user_id,
-        input_content: item.input_content, // Or item.original if you changed schema
-        output_content: item.output_content, // Or item.result
-        tone: item.tone || "Professional",
-        createdAt: item.createdAt
+    const formattedHistory = history.map((item) => ({
+      _id: item._id,
+      user_id: item.user_id,
+      input_content: item.input_content, // Or item.original if you changed schema
+      output_content: item.output_content, // Or item.result
+      tone: item.tone || "Professional",
+      createdAt: item.createdAt,
     }));
 
     res.status(200).json({

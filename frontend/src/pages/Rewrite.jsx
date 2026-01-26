@@ -7,8 +7,10 @@ import { rewriteContent } from "../../services/content";
 import { toast } from "react-toastify";
 import { 
   Wand2, Copy, RefreshCw, Check, Sparkles, FileText, AlignLeft,
-  Trash2, Clipboard, Eraser 
+  Clipboard, Eraser ,History
 } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { useAuth } from "../../src/context/auth"; // Ensure path is correct
 
 const MAX_CHARS = 2000;
 const TONE_OPTIONS = ["Professional", "Casual", "Enthusiastic", "Concise", "Expanded"];
@@ -23,23 +25,49 @@ export default function Rewrite() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState(null);
+  const { action } = useParams();
+
+  // 1. Hook Fix: Added parentheses to call useAuth
+  const { login } = useAuth(); 
+
+  const PAGE = {
+    rewrite: {
+      header: "Rewrite content",
+      subHeader: "Rewrite and refine your text instantly",
+      "loading-text": "Rewriting"
+    }
+  };
+  
+  // 2. Safety Fix: Optional chaining to prevent crash if 'action' is undefined
+  const pageContent = PAGE[action] || PAGE.rewrite; 
   
   const pageRef = useRef(null);
   const resultRef = useRef(null);
 
-  // Animations (Same as before)
+  // 3. Animation Fix: Added 'action' to dependency array
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(pageRef.current, { opacity: 0, y: 16, duration: 0.6, ease: "power3.out" });
+      gsap.from(pageRef.current, { 
+        opacity: 0, 
+        y: 16, 
+        duration: 0.6, 
+        ease: "power3.out" 
+      });
     });
     return () => ctx.revert();
-  }, []);
+  }, [action]);
 
   useEffect(() => {
     if (!rewrittenText || !resultRef.current) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(".result-content", { opacity: 0, y: 10, filter: "blur(5px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power2.out" });
-      gsap.fromTo(".result-actions", { opacity: 0 }, { opacity: 1, duration: 0.4, delay: 0.2 });
+      gsap.fromTo(".result-content", 
+        { opacity: 0, y: 10, filter: "blur(5px)" }, 
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power2.out" }
+      );
+      gsap.fromTo(".result-actions", 
+        { opacity: 0 }, 
+        { opacity: 1, duration: 0.4, delay: 0.2 }
+      );
     }, resultRef);
     
     if (window.innerWidth < 1024) {
@@ -65,6 +93,7 @@ export default function Rewrite() {
       setRewrittenText(res?.data?.content);
     } catch (err) {
       setError("Failed to rewrite content.");
+      toast.error("Failed to rewrite content.");
     } finally {
       setIsSubmitting(false);
     }
@@ -73,12 +102,15 @@ export default function Rewrite() {
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText();
-      setValue("content", text);
-    } catch (err) { console.error(err); }
+      setValue("content", text, { shouldValidate: true });
+    } catch (err) { 
+      toast.error("Clipboard access denied.");
+    }
   };
 
+  // 4. Logic Fix: Syncing form state with clear action
   const handleClear = () => {
-    setValue("content", "");
+    setValue("content", "", { shouldValidate: true });
     setRewrittenText(null);
   };
 
@@ -91,21 +123,19 @@ export default function Rewrite() {
   };
 
   return (
-    // 🔥 UI UPGRADE 1: Dot Pattern Background
     <div ref={pageRef} className="min-h-screen bg-[#F9FAFB] px-4 py-12 font-sans relative overflow-hidden">
       <div className="absolute inset-0 opacity-[0.4]" 
            style={{ backgroundImage: 'radial-gradient(#CBD5E1 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
       </div>
 
       <div className="relative z-10 mx-auto max-w-6xl">
-        
         {/* HEADER */}
         <div className="mb-10 text-center">
           <div className="inline-flex items-center justify-center p-3 mb-4 rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 text-blue-600">
             <Wand2 size={24} />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Rewrite Content</h1>
-          <p className="mt-2 text-lg text-gray-500">Choose a tone and refine your text instantly.</p>
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900">{pageContent.header}</h1>
+          <p className="mt-2 text-lg text-gray-500">{pageContent.subHeader}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
@@ -113,7 +143,6 @@ export default function Rewrite() {
           {/* LEFT: INPUT */}
           <div className="flex flex-col h-full rounded-2xl bg-white shadow-xl shadow-gray-200/50 ring-1 ring-gray-100 overflow-hidden transition-shadow hover:shadow-2xl hover:shadow-gray-200/50">
             
-            {/* 🔥 UI UPGRADE 2: Quick Actions Toolbar */}
             <div className="px-5 py-3 border-b border-gray-100 bg-white flex items-center justify-between">
               <div className="flex items-center gap-2 text-gray-500 text-xs font-semibold uppercase tracking-wider">
                 <FileText size={14} />
@@ -139,11 +168,10 @@ export default function Rewrite() {
                   placeholder="Paste your content here..."
                 />
                 <div className={`absolute bottom-4 right-6 text-xs font-medium transition-colors ${contentValue.length > MAX_CHARS ? "text-red-500" : "text-gray-300"}`}>
-                   {contentValue.length}/{MAX_CHARS}
+                    {contentValue.length}/{MAX_CHARS}
                 </div>
               </div>
 
-              {/* 🔥 UI UPGRADE 3: Tone Chips (Pills) */}
               <div className="px-5 py-4 bg-white border-t border-gray-100">
                 <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 block">Select Tone</label>
                 <div className="flex flex-wrap gap-2">
@@ -177,7 +205,7 @@ export default function Rewrite() {
                   {isSubmitting ? (
                     <>
                       <RefreshCw className="animate-spin" size={18} />
-                      <span>Rewriting...</span>
+                      <span>{pageContent["loading-text"]}</span>
                     </>
                   ) : (
                     <>
@@ -194,7 +222,6 @@ export default function Rewrite() {
           {/* RIGHT: RESULT */}
           <div className="h-full flex flex-col">
             <div ref={resultRef} className={`flex-1 flex flex-col rounded-2xl bg-white shadow-xl shadow-gray-200/50 ring-1 ring-gray-100 overflow-hidden transition-all duration-500 ${rewrittenText ? 'ring-2 ring-purple-500/20' : ''}`}>
-               
                <div className="px-5 py-3 border-b border-gray-100 bg-white flex items-center justify-between">
                   <div className="flex items-center gap-2 text-purple-600 text-xs font-semibold uppercase tracking-wider">
                      <Sparkles size={14} />
@@ -207,7 +234,7 @@ export default function Rewrite() {
                   )}
                </div>
 
-               <div className="p-6 flex-1 flex flex-col min-h-100 bg-gray-50/30">
+               <div className="p-6 flex-1 flex flex-col min-h-[300px] bg-gray-50/30">
                   {isSubmitting ? (
                     <div className="space-y-4 animate-pulse pt-2">
                         <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -217,7 +244,6 @@ export default function Rewrite() {
                     </div>
                   ) : rewrittenText ? (
                     <>
-                        {/* 🔥 UI UPGRADE 4: Monospace Font for Result */}
                         <div className="result-content flex-1 text-base leading-relaxed text-gray-800 whitespace-pre-wrap font-mono text-sm">
                             {rewrittenText}
                         </div>
@@ -226,7 +252,7 @@ export default function Rewrite() {
                                 {copied ? <Check size={16} className="text-green-600"/> : <Copy size={16} />}
                                 {copied ? "Copied" : "Copy"}
                             </button>
-                            <button onClick={() => { reset({ ...watch(), content: watch("content") }); setRewrittenText(null); }} className="px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm" title="Clear Output">
+                            <button onClick={() => { setRewrittenText(null); }} className="px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm" title="Clear Output">
                                 <RefreshCw size={16} />
                             </button>
                         </div>
@@ -240,8 +266,13 @@ export default function Rewrite() {
                </div>
             </div>
           </div>
-
         </div>
+      </div>
+       {/* DIVIDER & HISTORY */}
+       <div className="relative py-8">
+        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+        <div className="relative flex justify-center"><span className="bg-[#F9FAFB] px-4 text-sm text-gray-400 flex items-center gap-2"><History size={16} /> Recent rewriten</span></div>
+        
       </div>
     </div>
   );

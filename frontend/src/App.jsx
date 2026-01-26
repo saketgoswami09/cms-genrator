@@ -9,6 +9,8 @@ import Rewrite from "./pages/Rewrite";
 import ContentHistory from "./pages/ContentHistory";
 import ImageHistory from "./components/ui/ImageHistory";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Image from "./pages/Image";
+import Content from "./pages/Content";
 // import Nav from "./components/nav/Nav";
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<SignUp />} />
+        <Route path="/image" element={<Image />} />
+        <Route path="/content" element={<Content />} />
         <Route path="/image/generate" element={<ProtectedRoute><GenerateImage /></ProtectedRoute>} />
         <Route path="/content/rewrite" element={<Rewrite />} />
         <Route path="/content/history" element={<ContentHistory />} />

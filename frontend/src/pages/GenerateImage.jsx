@@ -93,6 +93,7 @@ export default function GenerateImage() {
       setGeneratedImages(res?.data?.image?.image_url);
       setRefreshTrigger(prev => prev + 1);
     } catch (err) {
+      console.error(err)
       setError("Failed to generate image. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -136,6 +137,8 @@ export default function GenerateImage() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
+      console.log(err);
+      
       setError("Download failed. Try right-clicking the image.");
     }
   };
@@ -216,7 +219,7 @@ export default function GenerateImage() {
 
             {/* RIGHT PANEL (Animated Class: gsap-panel) */}
             <div className="gsap-panel lg:col-span-8 h-full">
-            <div className={`h-full min-h-[500px] rounded-2xl bg-white shadow-xl shadow-gray-200/50 ring-1 ring-gray-100 transition-all duration-500 ${generatedImages ? 'ring-2 ring-purple-500/20' : ''} flex flex-col overflow-hidden`}>
+            <div className={`h-full min-h-125 rounded-2xl bg-white shadow-xl shadow-gray-200/50 ring-1 ring-gray-100 transition-all duration-500 ${generatedImages ? 'ring-2 ring-purple-500/20' : ''} flex flex-col overflow-hidden`}>
                 
                 <div className="px-5 py-3 border-b border-gray-100 bg-white flex items-center justify-between">
                     <div className="flex items-center gap-2 text-purple-600 text-xs font-semibold uppercase tracking-wider">
@@ -235,7 +238,7 @@ export default function GenerateImage() {
                     ) : generatedImages ? (
                     <div className="gsap-result-image w-full flex flex-col items-center">
                         <div className="relative group rounded-lg overflow-hidden shadow-sm border border-gray-200">
-                            <img src={generatedImages} alt="AI Generated" className="max-h-[600px] w-auto object-contain" />
+                            <img src={generatedImages} alt="AI Generated" className="max-h-150 w-auto object-contain" />
                         </div>
                         <div className="flex w-full max-w-sm gap-3 mt-8">
                             <button onClick={handleDownload} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all shadow-sm">
