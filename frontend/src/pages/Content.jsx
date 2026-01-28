@@ -1,84 +1,124 @@
-import Card from "../component/Card";
-import { ListIcon, WriteIcon } from "../component/Icons";
+import Card from "../components/Card";
+import { 
+  FileText, 
+  Maximize2, 
+  Minimize2, 
+  Search, 
+  PenTool, 
+  History, 
+  Sparkles 
+} from "lucide-react";
 
 const contentFeatures = [
   {
     id: "rewrite",
     link: "/content/rewrite",
     title: "Rewrite Content",
-    description: "Rewrite your content with AI",
-    icon: <WriteIcon style="w-6 h-6 text-blue-600" />,
-    gradient: "from-blue-600 to-cyan-600",
+    description: "Refine grammar and flow while keeping your original meaning.",
+    icon: <FileText className="w-6 h-6" />,
+    gradient: "from-blue-600 to-cyan-500",
   },
   {
     id: "expand",
     link: "/content/expand",
-    title: "Expand content",
-    description: "Make your content more detailed with AI",
-    icon: <WriteIcon style="w-6 h-6 text-indigo-600" />,
-    gradient: "from-indigo-600 to-purple-600",
+    title: "Expand Content",
+    description: "Add depth and detail to brief notes or short paragraphs.",
+    icon: <Maximize2 className="w-6 h-6" />,
+    gradient: "from-indigo-600 to-purple-500",
   },
   {
     id: "shorten",
     link: "/content/shorten",
     title: "Shorten Content",
-    description: "Make your content more concise with AI",
-    icon: <WriteIcon style="w-6 h-6 text-orange-600" />,
-    gradient: "from-orange-600 to-stone-400",
+    description: "Summarize long articles into concise, punchy sentences.",
+    icon: <Minimize2 className="w-6 h-6" />,
+    gradient: "from-orange-500 to-amber-400",
   },
   {
     id: "seo-content",
     link: "/content/seo-content",
-    title: "SEO content",
-    description:
-      "Automatically generate SEO title, keyword, and meta description",
-    icon: <ListIcon style="w-6 h-6 text-cyan-600" />,
-    gradient: "from-cyan-500 to-pink-500",
+    title: "SEO Optimizer",
+    description: "Generate meta tags, keywords, and titles for better ranking.",
+    icon: <Search className="w-6 h-6" />,
+    gradient: "from-cyan-500 to-teal-500",
   },
   {
     id: "generate-article",
     link: "/content/generate-article",
-    title: "Generate Article",
-    description: "Create a new article with AI",
-    icon: <WriteIcon style="w-6 h-6 text-green-600" />,
-    gradient: "from-green-600 to-cyan-600",
+    title: "Article Writer",
+    description: "Create full-length, structured articles from a simple topic.",
+    icon: <PenTool className="w-6 h-6" />,
+    gradient: "from-green-600 to-emerald-500",
+    badge: "New"
   },
   {
     id: "history",
     link: "/content/history",
-    title: "Content history",
-    description: "View and manage all your generated content",
-    icon: <ListIcon style="w-6 h-6 text-purple-600" />,
+    title: "Output Vault",
+    description: "Access and manage all your previously generated text.",
+    icon: <History className="w-6 h-6" />,
     gradient: "from-purple-500 to-pink-500",
   },
 ];
 
 export default function Content() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4 py-12">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-            Content Management
+    <div className="min-h-screen bg-[#F9FAFB] relative overflow-hidden">
+      {/* 🧬 Background Mesh (Subtle UI Touch) */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-50 rounded-full blur-[120px] -z-10 opacity-60" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[120px] -z-10 opacity-60" />
+
+      <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
+        {/* HEADER SECTION */}
+        <div className="text-center mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold border border-indigo-100 uppercase tracking-widest">
+            <Sparkles size={14} /> AI Writing Assistant
+          </div>
+          <h1 className="text-5xl md:text-6xl font-black text-gray-900 tracking-tight">
+            Content <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">Engine</span>
           </h1>
-          <p className="text-gray-600 text-lg">
-            {/* add more content if needed */}
-            Transform and manage your content with AI-powered tools
+          <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
+            From quick rewrites to full-length articles, leverage our advanced 
+            language models to perfect your copy.
           </p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 pt-8">
+
+        {/* DYNAMIC GRID */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {contentFeatures.map((feature) => (
             <Card key={feature.id} feature={feature} />
           ))}
         </div>
-        <div className="mt-12 border p-8 rounded-2xl shadow-xl border-gray-300">
-          <h2 className="text-2xl font-bold">About content Tools</h2>
-          <p className="text-gray-600 mt-2">
-            Our content management suite provides powerful AI-driven tools to
-            help you create, edit, and optimize your content. Whether you need
-            to rewrite text, shorten lengthy articles, or expand brief content,
-            we have the tools to help you achieve your goals.
-          </p>
+
+        {/* INFO FOOTER SECTION */}
+        <div className="mt-24 relative overflow-hidden rounded-[2rem] bg-gray-900 p-8 md:p-12 text-white">
+          <div className="absolute top-0 right-0 -m-12 opacity-10">
+            <FileText size={300} />
+          </div>
+          
+          <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl font-bold mb-4">Precision Editing. <br/> Infinite Possibilities.</h2>
+              <p className="text-gray-400 text-lg leading-relaxed">
+                Our content tools don't just replace words; they understand 
+                context, intent, and tone to ensure your voice remains authentic 
+                while becoming more professional.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+               {[
+                 { label: "Grammar Check", color: "bg-blue-500" },
+                 { label: "Plagiarism Safe", color: "bg-purple-500" },
+                 { label: "Tone Control", color: "bg-orange-500" },
+                 { label: "Instant Export", color: "bg-green-500" }
+               ].map((tag, i) => (
+                 <div key={i} className="flex items-center gap-2 bg-white/5 border border-white/10 p-4 rounded-xl">
+                   <div className={`w-2 h-2 rounded-full ${tag.color}`} />
+                   <span className="text-sm font-medium">{tag.label}</span>
+                 </div>
+               ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
