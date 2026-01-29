@@ -1,16 +1,19 @@
 require("dotenv").config();
 const { GoogleGenAI } = require("@google/genai");
 const Content = require("../models/content.model"); // Ensure this matches your filename
+// const { rewriteContent } = require("../../frontend/services/content");
 
 // Initialize Gemini
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
-
+const ACTION = {
+  rewrite: {},
+};
 // ===============================
 // 🔁 REWRITE & SAVE
 // ===============================
-exports.rewriteContent = async (req, res) => {
+exports.generateContent = async (req, res) => {
   try {
     if (!req.user?.userId) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -28,19 +31,22 @@ exports.rewriteContent = async (req, res) => {
 
     const selectedTone = tone || "Professional";
 
+    console.log(req.params.action);
+    
+
     const prompt = `
-Rewrite the following content.
+      Rewrite the following content.
 
-Tone: ${selectedTone}
+      Tone: ${selectedTone}
 
-Rules:
-- Keep the meaning the same
-- Improve grammar, clarity, and flow
-- Return ONLY the rewritten content
-- No explanations, no quotes
+      Rules:
+      - Keep the meaning the same
+      - Improve grammar, clarity, and flow
+      - Return ONLY the rewritten content
+      - No explanations, no quotes
 
-Content:
-${safeContent}
+      Content:
+      ${safeContent}
     `;
 
     const response = await ai.models.generateContent({
@@ -73,10 +79,15 @@ ${safeContent}
     console.error("Rewrite failed:", error);
 
     // 🔥 Exact check for Gemini's 429 Error
-    if (error.status === 429 || error.message?.includes("Quota exceeded") || error.message?.includes("429")) {
+    if (
+      error.status === 429 ||
+      error.message?.includes("Quota exceeded") ||
+      error.message?.includes("429")
+    ) {
       return res.status(429).json({
         success: false,
-        message: "AI thoda thak gaya hai (Limit Reached). Please 30 seconds baad try karein.",
+        message:
+          "AI thoda thak gaya hai (Limit Reached). Please 30 seconds baad try karein.",
       });
     }
 
