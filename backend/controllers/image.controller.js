@@ -12,6 +12,7 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
 });
 
 exports.generateImage = async (req, res) => {
@@ -54,7 +55,7 @@ exports.generateImage = async (req, res) => {
     //  Save to MongoDB
     const savedImage = await Image.create({
       prompt,
-      image_url: uploadResult?.url,
+      image_url: uploadResult?.secure_url,
       user_id: req.user.userId,
     });
 
@@ -94,8 +95,6 @@ exports.history = async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    console.log(`Start processing image history request for user ${userId}`);
-    
     const images = await Image.aggregate([
       {
         $match: {
@@ -105,7 +104,14 @@ exports.history = async (req, res) => {
       {
         $project: {
           user_id: 1,
-          image_url: "$image_url",
+          // 3️⃣ Fix old HTTP links on the fly
+          image_url: {
+            $replaceOne: {
+              input: "$image_url",
+              find: "http://",
+              replacement: "https://",
+            },
+          },
           prompt: 1,
           createdAt: 1,
         },
