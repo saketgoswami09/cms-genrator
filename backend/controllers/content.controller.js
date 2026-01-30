@@ -21,17 +21,14 @@ exports.generateContent = async (req, res) => {
 
     const { content, tone } = req.body;
 
-    if (!content || content.trim().length === 0) {
+    if (!content || !content.trim()) {
       return res.status(400).json({ message: "Content is required" });
     }
 
-    // 🔒 Token safety (VERY important on free tier)
+    // Free-tier safety
     const MAX_CHARS = 1200;
     const safeContent = content.slice(0, MAX_CHARS);
-
     const selectedTone = tone || "Professional";
-
-    console.log(req.params.action);
 
     const prompt = `
 Rewrite the content below.
@@ -47,15 +44,19 @@ ${safeContent}
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash", // ✅ match dashboard
+      model: "gemini-2.5-flash",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
+    // ✅ Correct response parsing
     const rewrittenText =
-      response?.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+      response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
     if (!rewrittenText) {
-      throw new Error("Empty response from AI");
+      return res.status(503).json({
+        success: false,
+        message: "AI temporarily unavailable. Please retry.",
+      });
     }
 
     const savedContent = await Content.create({
@@ -75,16 +76,15 @@ ${safeContent}
   } catch (error) {
     console.error("Rewrite failed:", error);
 
-    // 🔥 Exact check for Gemini's 429 Error
+    // Gemini quota / throttling
     if (
       error.status === 429 ||
-      error.message?.includes("Quota exceeded") ||
-      error.message?.includes("429")
+      error.message?.includes("Quota") ||
+      error.message?.includes("RESOURCE_EXHAUSTED")
     ) {
       return res.status(429).json({
         success: false,
-        message:
-          "AI thoda thak gaya hai (Limit Reached). Please 30 seconds baad try karein.",
+        message: "AI busy hai 😮‍💨 30 seconds baad try karo.",
       });
     }
 

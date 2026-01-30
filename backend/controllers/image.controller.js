@@ -1,7 +1,7 @@
 require("dotenv").config();
 const cloudinary = require("cloudinary").v2;
 const { InferenceClient } = require("@huggingface/inference");
-const mongoose = require("mongoose");
+const moongoose = require("mongoose");
 
 const RESOLUTION_MAP = require("../constant");
 const Image = require("../models/image.model");
@@ -35,11 +35,11 @@ exports.generateImage = async (req, res) => {
 
     //  Generate Image
     const imageBlob = await client.textToImage({
-      provider: "auto",
+      provider: "hf-inference",
       model: "black-forest-labs/FLUX.1-schnell",
       inputs: prompt,
       parameters: {
-        num_inference_steps: 8,
+        num_inference_steps: 5,
         width: dimension.width,
         height: dimension.height,
       },
@@ -54,7 +54,7 @@ exports.generateImage = async (req, res) => {
     //  Save to MongoDB
     const savedImage = await Image.create({
       prompt,
-      image_url: uploadResult?.url || uploadResult.secure_url,
+      image_url: uploadResult?.url,
       user_id: req.user.userId,
     });
 
@@ -95,11 +95,11 @@ exports.history = async (req, res) => {
     const userId = req.user.userId;
 
     console.log(`Start processing image history request for user ${userId}`);
-
+    
     const images = await Image.aggregate([
       {
         $match: {
-          user_id: new mongoose.Types.ObjectId(userId),
+          user_id: new moongoose.Types.ObjectId(userId),
         },
       },
       {

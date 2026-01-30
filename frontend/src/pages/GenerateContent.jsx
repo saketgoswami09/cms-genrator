@@ -81,7 +81,7 @@ export default function GenerateContent() {
 
     try {
       const { data: res } = await pageContent.handler(data);
-      setGeneratedContent(res?.data?.content);
+      setGeneratedContent(res?.content);
     } catch (err) {
       const errMsg = "Failed to generate content. Please try again.";
       setError(errMsg);
