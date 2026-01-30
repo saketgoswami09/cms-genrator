@@ -50,7 +50,7 @@ exports.generateImage = async (req, res) => {
 
     //  Upload to Cloudinary
     const uploadResult = await uploadImage(buffer);
-    const imageUrl = uploadResult.secure_url || uploadResult.url;
+    const imageUrl = uploadResult.secure_url ;
 
     //  Save to MongoDB
     const savedImage = await Image.create({
