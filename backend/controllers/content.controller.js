@@ -1,82 +1,97 @@
 require("dotenv").config();
 const { GoogleGenAI } = require("@google/genai");
 const Content = require("../models/content.model"); // Ensure this matches your filename
-// const { rewriteContent } = require("../../frontend/services/content");
-
+const { ACTIONS, HTTP_STATUS } = require("../constant");
 // Initialize Gemini
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
-const ACTION = {
-  rewrite: {},
-};
+
 // ===============================
 // 🔁 REWRITE & SAVE
 // ===============================
 exports.generateContent = async (req, res) => {
   try {
+    // 🔐 Auth check
     if (!req.user?.userId) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        success: false,
+        message: "Unauthorized",
+      });
     }
 
+    const { action } = req.params;
     const { content, tone } = req.body;
 
-    if (!content || !content.trim()) {
-      return res.status(400).json({ message: "Content is required" });
+    // 🧠 Validate action
+    if (!ACTIONS[action]) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid content action",
+      });
     }
 
-    // Free-tier safety
+    // 📝 Validate input
+    if (!content || !content.trim()) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        success: false,
+        message: "Content is required",
+      });
+    }
+
+    // 🛡️ Free-tier safety
     const MAX_CHARS = 1200;
     const safeContent = content.slice(0, MAX_CHARS);
     const selectedTone = tone || "Professional";
 
+    const actionConfig = ACTIONS[action];
+
+    // ✨ Build prompt dynamically
     const prompt = `
-Rewrite the content below.
+${actionConfig.prompt}
 
 Tone: ${selectedTone}
 
-Rules:
-- Same meaning
-- Better grammar and clarity
-- Only rewritten text
-
+User Content:
 ${safeContent}
 `;
 
+    // 🤖 Gemini call
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
-    // ✅ Correct response parsing
-    const rewrittenText =
+    const outputText =
       response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
-    if (!rewrittenText) {
-      return res.status(503).json({
+    if (!outputText) {
+      return res.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({
         success: false,
         message: "AI temporarily unavailable. Please retry.",
       });
     }
 
+    // 💾 Save to DB
     const savedContent = await Content.create({
       user_id: req.user.userId,
       input_content: safeContent,
-      output_content: rewrittenText,
+      output_content: outputText,
       tone: selectedTone,
-      type: "rewrite",
+      type: action,
     });
 
-    return res.status(201).json({
+    // ✅ Success response
+    return res.status(HTTP_STATUS.CREATED).json({
       success: true,
-      message: "Content rewritten successfully",
-      content: savedContent.output_content,
+      message: actionConfig.message,
+      content: outputText,
       data: savedContent,
     });
   } catch (error) {
-    console.error("Rewrite failed:", error);
+    console.error("Content generation failed:", error);
 
-    // Gemini quota / throttling
+    // ⏱️ Gemini quota handling
     if (
       error.status === 429 ||
       error.message?.includes("Quota") ||
@@ -88,7 +103,7 @@ ${safeContent}
       });
     }
 
-    return res.status(500).json({
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Something went wrong on our side.",
     });
@@ -111,7 +126,7 @@ exports.getContentHistory = async (req, res) => {
       user_id: item.user_id,
       input_content: item.input_content, // Or item.original if you changed schema
       output_content: item.output_content, // Or item.result
-      tone: item.tone || "Professional",
+      tone: item.tone,
       createdAt: item.createdAt,
     }));
 

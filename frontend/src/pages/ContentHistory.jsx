@@ -46,7 +46,7 @@ export default function ContentHistory({ refreshTrigger }) {
           ...item,
           original: item.input_content || item.original,
           result: item.output_content || item.result,
-          tone: item.tone || "Professional",
+          tone: item.tone ,
         }));
 
         setHistory(formattedData);
