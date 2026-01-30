@@ -32,25 +32,22 @@ exports.generateContent = async (req, res) => {
     const selectedTone = tone || "Professional";
 
     console.log(req.params.action);
-    
 
     const prompt = `
-      Rewrite the following content.
+Rewrite the content below.
 
-      Tone: ${selectedTone}
+Tone: ${selectedTone}
 
-      Rules:
-      - Keep the meaning the same
-      - Improve grammar, clarity, and flow
-      - Return ONLY the rewritten content
-      - No explanations, no quotes
+Rules:
+- Same meaning
+- Better grammar and clarity
+- Only rewritten text
 
-      Content:
-      ${safeContent}
-    `;
+${safeContent}
+`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash", // ✅ match dashboard
+      model: "gemini-2.5-flash", // ✅ match dashboard
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
