@@ -1,7 +1,7 @@
 require("dotenv").config();
 const cloudinary = require("cloudinary").v2;
 const { InferenceClient } = require("@huggingface/inference");
-const moongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 const RESOLUTION_MAP = require("../constant");
 const Image = require("../models/image.model");
@@ -37,7 +37,7 @@ exports.generateImage = async (req, res) => {
     //  Generate Image
     const imageBlob = await client.textToImage({
       provider: "hf-inference",
-      model: "black-forest-labs/FLUX.1-schnell",
+      model: "stabilityai/stable-diffusion-xl-base-1.0",
       inputs: prompt,
       parameters: {
         num_inference_steps: 5,
@@ -98,7 +98,7 @@ exports.history = async (req, res) => {
     const images = await Image.aggregate([
       {
         $match: {
-          user_id: new moongoose.Types.ObjectId(userId),
+          user_id: new mongoose.Types.ObjectId(userId),
         },
       },
       {

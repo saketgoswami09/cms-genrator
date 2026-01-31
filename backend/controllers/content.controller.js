@@ -2,17 +2,14 @@ require("dotenv").config();
 const { GoogleGenAI } = require("@google/genai");
 const Content = require("../models/content.model"); // Ensure this matches your filename
 const { ACTIONS, HTTP_STATUS } = require("../constant");
-// Initialize Gemini
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-// ===============================
-// 🔁 REWRITE & SAVE
-// ===============================
+
 exports.generateContent = async (req, res) => {
   try {
-    // 🔐 Auth check
+    //  Auth check
     if (!req.user?.userId) {
       return res.status(HTTP_STATUS.UNAUTHORIZED).json({
         success: false,
@@ -23,7 +20,7 @@ exports.generateContent = async (req, res) => {
     const { action } = req.params;
     const { content, tone } = req.body;
 
-    // 🧠 Validate action
+    //  Validate action
     if (!ACTIONS[action]) {
       return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
@@ -31,7 +28,7 @@ exports.generateContent = async (req, res) => {
       });
     }
 
-    // 📝 Validate input
+    //  Validate input
     if (!content || !content.trim()) {
       return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
@@ -39,14 +36,14 @@ exports.generateContent = async (req, res) => {
       });
     }
 
-    // 🛡️ Free-tier safety
+    //  Free-tier safety
     const MAX_CHARS = 1200;
     const safeContent = content.slice(0, MAX_CHARS);
     const selectedTone = tone || "Professional";
 
     const actionConfig = ACTIONS[action];
 
-    // ✨ Build prompt dynamically
+    //  Build prompt dynamically
     const prompt = `
 ${actionConfig.prompt}
 
@@ -56,7 +53,7 @@ User Content:
 ${safeContent}
 `;
 
-    // 🤖 Gemini call
+    //  Gemini call
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -72,7 +69,7 @@ ${safeContent}
       });
     }
 
-    // 💾 Save to DB
+    //  Save to DB
     const savedContent = await Content.create({
       user_id: req.user.userId,
       input_content: safeContent,
@@ -81,7 +78,7 @@ ${safeContent}
       type: action,
     });
 
-    // ✅ Success response
+    //  Success response
     return res.status(HTTP_STATUS.CREATED).json({
       success: true,
       message: actionConfig.message,
@@ -91,7 +88,7 @@ ${safeContent}
   } catch (error) {
     console.error("Content generation failed:", error);
 
-    // ⏱️ Gemini quota handling
+    //  Gemini quota handling
     if (
       error.status === 429 ||
       error.message?.includes("Quota") ||
@@ -110,9 +107,7 @@ ${safeContent}
   }
 };
 
-// ===============================
-// 📜 GET HISTORY
-// ===============================
+
 exports.getContentHistory = async (req, res) => {
   try {
     const history = await Content.find({ user_id: req.user.userId })
@@ -124,8 +119,8 @@ exports.getContentHistory = async (req, res) => {
     const formattedHistory = history.map((item) => ({
       _id: item._id,
       user_id: item.user_id,
-      input_content: item.input_content, // Or item.original if you changed schema
-      output_content: item.output_content, // Or item.result
+      input_content: item.input_content, 
+      output_content: item.output_content,
       tone: item.tone,
       createdAt: item.createdAt,
     }));
@@ -140,9 +135,7 @@ exports.getContentHistory = async (req, res) => {
   }
 };
 
-// ===============================
-// 🗑️ DELETE HISTORY ITEM
-// ===============================
+
 exports.deleteContentHistory = async (req, res) => {
   try {
     const { id } = req.params;

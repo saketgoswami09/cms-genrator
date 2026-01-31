@@ -31,13 +31,13 @@ exports.signIn = async (req, res) => {
     }
 
     // 4. GENERATE JWT TOKEN
-    // payload: data you want to hide in the token (usually user ID and email)
+    // payload: data you want to hide in the token 
 
     const payload = { userId: user._id, email: user.email };
     const token = jwt.sign(
       payload,
-      process.env.JWT_SECRET, // This must be in your .env file
-      { expiresIn: "7d" } // Token expires 7day
+      process.env.JWT_SECRET, 
+      { expiresIn: "7d" } 
     );
 
     const userResponse = {
@@ -50,7 +50,7 @@ exports.signIn = async (req, res) => {
     // 5. Send Token + User Data
     return res.status(200).json({
       message: "User signed in successfully",
-      token: token, // Send the token to frontend
+      token: token, 
       user: userResponse,
     });
   } catch (error) {
