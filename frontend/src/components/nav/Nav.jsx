@@ -1,7 +1,7 @@
 import React, { useState } from "react"; // Added useState
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
-import { Sparkles, Image as ImageIcon, LogOut, Menu, X } from "lucide-react";
+import { Sparkles, Image as ImageIcon, LogOut, Menu, X, Info, BarChart } from "lucide-react";
 
 export default function Nav() {
   const navigate = useNavigate();
@@ -44,6 +44,13 @@ export default function Nav() {
           >
             <ImageIcon size={14} /> Image
           </Link>
+          <Link
+            to="/resume/analyze"
+            className="text-sm font-semibold flex items-center gap-2 hover:text-blue-400 transition-colors"
+          >
+            <BarChart size={14} /> Rate your Resume
+          </Link>
+          
         </div>
       )}
 

@@ -14,7 +14,7 @@ import {
 import { toast } from "react-toastify";
 import {
   getContentHistory,
-  deleteContentHistory, // Make sure this is exported from your api service
+  deleteContentHistory, 
 } from "../../services/content";
 
 // 🔥 Accept refreshTrigger from parent

@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import HeroVideo from "../assets/vid2.mp4";
+import HeroVideo from "../assets/pro.mp4";
 import DemoVideo from "../assets/Need_2_1080P.mp4";
 
 import Preloader from "../components/preloader/Preloader";

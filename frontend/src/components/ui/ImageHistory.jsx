@@ -1,12 +1,12 @@
-import React, { useState, useLayoutEffect, useEffect, useRef } from "react";
+import { useState, useLayoutEffect, useEffect, useRef } from "react";
 import gsap from "gsap";
 import {
-  Download, Trash2, Copy, Check, Maximize2, 
+  Download, Maximize2, 
   Image as ImageIcon, X, Clock, ExternalLink 
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { imageHistory } from "../../../services/image";
-import { downloadImage } from "../../utils/global"; // Using your global helper
+import { downloadImage } from "../../utils/global"; 
 
 // --- HELPER: Group data by date logic remains the same ---
 const groupHistoryByDate = (history) => {

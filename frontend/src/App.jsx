@@ -11,6 +11,7 @@ import ImageHistory from "./components/ui/ImageHistory";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Image from "./pages/Image";
 import Content from "./pages/Content";
+import ResumeRater from "./pages/ResumeRater";
 // import Nav from "./components/nav/Nav";
 function App() {
   return (
@@ -23,10 +24,25 @@ function App() {
         <Route path="/register" element={<SignUp />} />
         <Route path="/image" element={<Image />} />
         <Route path="/content" element={<Content />} />
-        <Route path="/image/generate" element={<ProtectedRoute><GenerateImage /></ProtectedRoute>} />
+        <Route
+          path="/image/generate"
+          element={
+            <ProtectedRoute>
+              <GenerateImage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/content/:action" element={<GenerateContent />} />
         <Route path="/content/history" element={<ContentHistory />} />
         <Route path="/image/history" element={<ImageHistory />} />
+        <Route
+          path="/resume/:action"
+          element={
+            <ProtectedRoute>
+              <ResumeRater />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
