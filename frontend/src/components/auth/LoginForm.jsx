@@ -73,7 +73,7 @@ const LoginForm = ({ cardRef }) => {
         className="relative w-full max-w-md rounded-3xl bg-white p-8 md:p-10 shadow-2xl"
       >
         <div className="mb-8">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="text-3xl font-heading tracking-tight text-gray-900">
             Welcome back
           </h2>
           <p className="mt-2 text-gray-500">

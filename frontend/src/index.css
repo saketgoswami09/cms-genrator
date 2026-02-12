@@ -1,8 +1,13 @@
-@import "tailwindcss";
-
-
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 ::-webkit-scrollbar {
   display: none;
+}
+@import "tailwindcss";
+
+@theme {
+  /* This creates 'font-heading' and 'font-sans' utilities */
+  --font-heading: "Outfit", sans-serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
 }
 
 /* Hide scrollbar for Firefox */

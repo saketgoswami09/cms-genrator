@@ -125,7 +125,7 @@ export default function GenerateContent() {
           <div className="inline-flex items-center justify-center p-3 mb-4 rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 text-blue-600">
             <Wand2 size={24} />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">{pageContent.header}</h1>
+          <h1 className="text-4xl font-heading tracking-tight text-gray-900">{pageContent.header}</h1>
           <p className="mt-2 text-lg text-gray-500">{pageContent["sub-header"] || pageContent.subHeader}</p>
         </div>
 

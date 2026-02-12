@@ -37,21 +37,27 @@ exports.analyzeResume = async (req, res) => {
     const role = req.body.role || "Software Developer";
 
     const prompt = `
-Analyze the resume below for the role of "${role}" as an ATS expert.
+    Analyze the resume below for the role of "${role}" as an ATS expert.
 
-Return STRICT JSON ONLY in this format:
-{
-  "score": number,
-  "match_percentage": number,
-  "strengths": [],
-  "weaknesses": [],
-  "improvements": [],
-  "ats_tips": []
-}
+    Return STRICT JSON ONLY in this format:
+    {
+      "score": number (0-100),
+      "match_percentage": number (0-100),
+      "breakdown": {
+        "Structure": number (0-100),
+        "Impact": number (0-100),
+        "Keywords": number (0-100),
+        "Technical": number (0-100)
+      },
+      "strengths": ["string", "string"],
+      "weaknesses": ["string", "string"],
+      "improvements": ["string", "string"],
+      "ats_tips": ["string", "string"]
+    }
 
-Resume Content:
-${resumeText.slice(0, 4000)}
-`;
+    Resume Content:
+    ${resumeText.slice(0, 4000)}
+    `;
 
     console.log("3. Sending to Gemini...");
 

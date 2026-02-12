@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Upload, FileText, Loader2, Sparkles, RefreshCcw } from "lucide-react";
+import { Upload, FileText, Sparkles, RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
-import { analyzeResume } from "../../services/resume"; // Import service
+import { analyzeResume } from "../../services/resume"; 
 import { ResumeResult } from "../components/ResumeResult";
+import ScanningLoader from "../components/ui/ScanningLoader"; 
 
 export default function ResumeRater() {
   const [file, setFile] = useState(null);
@@ -29,7 +30,6 @@ export default function ResumeRater() {
     formData.append("role", role);
 
     try {
-      // Using the service instead of direct axios
       const res = await analyzeResume(formData);
       setResult(res.data.data);
       toast.success("Analysis complete!");
@@ -48,16 +48,40 @@ export default function ResumeRater() {
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-xs font-bold mb-4 border border-purple-100 uppercase tracking-widest">
-          <Sparkles size={14} /> ATS Optimizer
+      {/* HEADER - Hide header during scanning to focus on animation */}
+      {!loading && (
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-xs font-bold mb-4 border border-purple-100 uppercase tracking-widest">
+            <Sparkles size={14} /> ATS Optimizer
+          </div>
+          <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+            Resume <span className="text-purple-600">Rater</span>
+          </h1>
         </div>
-        <h1 className="text-4xl font-black text-gray-900 tracking-tight">
-          Resume <span className="text-purple-600">Rater</span>
-        </h1>
-      </div>
+      )}
 
-      {!result ? (
+      {/* LOGIC FLOW: 
+          1. If Result exists -> Show Result
+          2. If Loading -> Show GSAP Scanner
+          3. Else -> Show Upload Form 
+      */}
+      {result ? (
+        <div className="space-y-6">
+          <ResumeResult result={result} />
+          <button 
+            onClick={handleReset}
+            className="flex items-center gap-2 mx-auto text-sm font-bold text-gray-400 hover:text-purple-600 transition-colors"
+          >
+            <RefreshCcw size={16} /> Re-upload another resume
+          </button>
+        </div>
+      ) : loading ? (
+        // 🌀 THE NEW SCANNER ANIMATION
+        <div className="animate-in fade-in zoom-in duration-500">
+           <ScanningLoader />
+        </div>
+      ) : (
+        // 📤 UPLOAD FORM
         <div className="space-y-6 animate-in fade-in duration-500">
           <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 block">Target Job Role</label>
@@ -92,20 +116,10 @@ export default function ResumeRater() {
 
           <button
             onClick={handleAnalyze}
-            disabled={loading || !file}
+            disabled={!file}
             className="w-full h-14 rounded-2xl bg-gray-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-black transition-all active:scale-[0.98] disabled:opacity-50"
           >
-            {loading ? <><Loader2 className="animate-spin" /> Analyzing...</> : "Start AI Analysis"}
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          <ResumeResult result={result} />
-          <button 
-            onClick={handleReset}
-            className="flex items-center gap-2 mx-auto text-sm font-bold text-gray-400 hover:text-purple-600 transition-colors"
-          >
-            <RefreshCcw size={16} /> Re-upload another resume
+            Start AI Analysis
           </button>
         </div>
       )}

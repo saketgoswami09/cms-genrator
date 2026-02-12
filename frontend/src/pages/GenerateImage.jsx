@@ -192,7 +192,7 @@ export default function GenerateImage() {
           <div className="inline-flex items-center justify-center p-3 mb-4 rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 text-purple-600">
             <ImageIcon size={24} />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-3xl md:text-4xl font-heading  tracking-tight text-gray-900">
             AI Image Generator
           </h1>
           <p className="mt-3 text-lg text-gray-500">

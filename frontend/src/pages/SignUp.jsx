@@ -12,9 +12,27 @@ const SignUp = () => {
 
   // 2. Render Layout
   return (
-    <div ref={pageRef} className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+    // ✨ CHANGED: Used 'flex h-screen' instead of 'min-h-screen grid'
+    // This forces the page to be exactly the viewport height (no outer scrollbar)
+    <div 
+      ref={pageRef} 
+      className="flex h-screen w-full overflow-hidden bg-white dark:bg-black"
+    >
+      
+      {/* 👈 LEFT SIDE: AuthHero 
+         (Ensure AuthHero component has 'w-1/2 hidden lg:flex' as discussed previously)
+      */}
       <AuthHero />
-      <SignUpForm cardRef={cardRef} />
+
+      {/* 👉 RIGHT SIDE: SignUpForm Container
+         - w-full: Takes full width on mobile
+         - lg:w-1/2: Takes half width on desktop
+         - overflow-y-auto: Allows ONLY this side to scroll if form is tall
+      */}
+      <div className="w-full lg:w-1/2 h-full flex items-center justify-center p-6 overflow-y-auto">
+        <SignUpForm cardRef={cardRef} />
+      </div>
+
     </div>
   );
 };

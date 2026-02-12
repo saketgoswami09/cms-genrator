@@ -44,23 +44,29 @@ const AuthHero = () => {
   }, []);
 
   return (
-    // Outer container: Dark background, curved corners
-    <div ref={containerRef} className="relative hidden lg:flex w-1/2 overflow-hidden bg-[#050505] h-full rounded-[40px] m-4 ring-1 ring-white/10">
+    // 👇 UPDATED CONTAINER CLASSES:
+    // Removed: m-4, rounded-[40px], ring-1
+    // Added: h-full (ensure parent is h-screen)
+    <div 
+      ref={containerRef} 
+      className="relative hidden lg:flex w-1/2 h-full overflow-hidden bg-[#050505]"
+    >
       
       {/* 🌌 Background Gradient */}
+      {/* Assuming AnimatedGradient covers absolute inset-0 */}
       <AnimatedGradient />
 
       {/* Content Layer */}
-      <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20 h-full w-full">
+      <div className="relative z-10 flex flex-col justify-center px-12 xl:px-24 h-full w-full">
         
         {/* Main Text */}
         <div className="mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-blue-300 mb-6 hero-text">
              <Sparkles size={12} /> AI-Powered V2.0
           </div>
-          <h1 className="hero-text text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
+          <h1 className="hero-text text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
             Build faster. <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
               Launch smarter.
             </span>
           </h1>
@@ -72,9 +78,9 @@ const AuthHero = () => {
         {/* 💎 Dark Glass Card */}
         <div className="glass-card relative max-w-md p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
            <div className="flex gap-1 mb-4">
-              {[1,2,3,4,5].map(i => (
-                <Star key={i} size={16} className="fill-yellow-500 text-yellow-500" />
-              ))}
+             {[1,2,3,4,5].map(i => (
+               <Star key={i} size={16} className="fill-yellow-500 text-yellow-500" />
+             ))}
            </div>
            <p className="text-white/80 text-sm font-medium leading-relaxed mb-4">
              "I switched to Dark Mode and never looked back. The AI generation tools are incredibly fast and the UI is stunning."

@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod"); // 1. Import Zod
 
-// 2. Define Validation Schemas (Put these at the top)
+// 2. Define Validation Schemas 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").trim(),
   email: z.string().email("Invalid email format").toLowerCase().trim(),
