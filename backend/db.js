@@ -1,23 +1,23 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
+
 const mongoURL = process.env.MONGO_URL;
 
-async function db() {
-  if (mongoose.connection.readyState === 1) {
-    console.error("Already connected to database, disconnecting first");
-  }
-  if (!mongoURL) {
-    console.error("MONGO URL is not set in enviorment variable");
-  }
-  mongoose
-    .connect(mongoURL)
-    .then(() => {
-      const databaseName = mongoose.connection.db.databaseName;
-      console.log("Database connected successfully");
-    })
-    .catch((e) => {
-      console.log(`Error in connection to the database ${e.message}`);
+const db = async () => {
+  try {
+    if (mongoose.connection.readyState >= 1) return;
+
+    await mongoose.connect(mongoURL, {
+      maxPoolSize: 10,        // Allows up to 10 simultaneous connections
+      serverSelectionTimeoutMS: 5000, // Fail fast if DB is down
+      socketTimeoutMS: 45000, // Close inactive connections
     });
-}
+
+    console.log(`Connected to Database: ${mongoose.connection.db.databaseName}`);
+  } catch (e) {
+    console.error(`MongoDB Connection Error: ${e.message}`);
+    process.exit(1); // Stop the server if DB fails
+  }
+};
 
 module.exports = db;

@@ -1,5 +1,4 @@
-const { default: mongoose } = require("mongoose");
-const moongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
@@ -13,6 +12,8 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
       unique: true,
+      lowercase: true, // Performance: ensures "User@Gmail.com" and "user@gmail.com" are the same
+      index: true,     // Explicitly tells MongoDB to optimize searches by email
     },
     password: {
       type: String,
@@ -20,9 +21,12 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    versionKey: false, // Performance: stops Mongoose from adding/tracking the __v field
+    autoIndex: false   // Recommended for production: handles indexing manually for speed
+  }
 );
 
-const User = moongoose.model("User", userSchema);
-
+const User = mongoose.model("User", userSchema);
 module.exports = User;

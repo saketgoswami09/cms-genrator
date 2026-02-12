@@ -1,6 +1,6 @@
 require("dotenv").config();
 const fs = require("fs");
-const pdfParse = require("pdf-parse"); 
+const pdfParse = require("pdf-parse");
 const { GoogleGenAI } = require("@google/genai");
 
 const ai = new GoogleGenAI({
@@ -9,7 +9,6 @@ const ai = new GoogleGenAI({
 
 exports.analyzeResume = async (req, res) => {
   try {
-  
     if (!req.file) {
       return res.status(400).json({
         success: false,
@@ -20,7 +19,7 @@ exports.analyzeResume = async (req, res) => {
     console.log("1. File received:", req.file.originalname);
 
     //  Parse PDF
-   
+
     const buffer = fs.readFileSync(req.file.path);
     const data = await pdfParse(buffer);
 
@@ -35,14 +34,8 @@ exports.analyzeResume = async (req, res) => {
       });
     }
 
-    // ===============================
-    // 3️⃣ Role
-    // ===============================
     const role = req.body.role || "Software Developer";
 
-    // ===============================
-    // 4️⃣ Prompt
-    // ===============================
     const prompt = `
 Analyze the resume below for the role of "${role}" as an ATS expert.
 
@@ -62,7 +55,6 @@ ${resumeText.slice(0, 4000)}
 
     console.log("3. Sending to Gemini...");
 
-  
     const result = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [
@@ -73,8 +65,7 @@ ${resumeText.slice(0, 4000)}
       ],
     });
 
-    const rawOutput =
-      result.candidates?.[0]?.content?.parts?.[0]?.text;
+    const rawOutput = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!rawOutput) {
       throw new Error("Empty response from Gemini");
@@ -82,11 +73,9 @@ ${resumeText.slice(0, 4000)}
 
     console.log("4. Gemini response received");
 
-   
     if (fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
-
 
     const jsonMatch = rawOutput.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
@@ -99,7 +88,6 @@ ${resumeText.slice(0, 4000)}
       success: true,
       data: finalData,
     });
-
   } catch (error) {
     console.error("RESUME ANALYSIS ERROR:", error);
 

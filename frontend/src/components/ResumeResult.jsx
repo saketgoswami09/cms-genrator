@@ -1,6 +1,6 @@
 import React from "react";
 import { ShieldCheck, Zap, BarChart3, Info, Target, Award } from "lucide-react";
-import { motion } from "framer-motion"; // 👈 Now being used below
+import { motion } from "framer-motion"; 
 
 export const ResumeResult = ({ result }) => {
   if (!result) return null;
@@ -24,12 +24,11 @@ export const ResumeResult = ({ result }) => {
       className="mt-16 space-y-10 max-w-5xl mx-auto pb-20 px-4"
     >
       
-      {/* 🏅 HERO SECTION: THE SCORE */}
       <motion.div 
         whileHover={{ scale: 1.02 }}
         className="relative group cursor-default"
       >
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-[3rem] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+        <div className="absolute -inset-1 bg-linear-to-r from-purple-600 to-blue-600 rounded-[3rem] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
         
         <div className="relative overflow-hidden rounded-[3rem] border border-white/40 bg-white/60 backdrop-blur-2xl p-12 text-center shadow-2xl">
           <motion.div 
@@ -47,7 +46,6 @@ export const ResumeResult = ({ result }) => {
           </h2>
           
           <div className="relative inline-block">
-            {/* 🔢 Score Animation */}
             <motion.span 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -72,10 +70,8 @@ export const ResumeResult = ({ result }) => {
         </div>
       </motion.div>
 
-      {/* 📊 INSIGHTS GRID */}
       <div className="grid md:grid-cols-2 gap-8">
         
-        {/* STRENGTHS */}
         <motion.div 
           variants={itemVars}
           className="relative overflow-hidden p-8 rounded-[2.5rem] bg-white/40 border-l-8 border-emerald-500 shadow-xl backdrop-blur-md"
@@ -94,7 +90,6 @@ export const ResumeResult = ({ result }) => {
           </ul>
         </motion.div>
 
-        {/* IMPROVEMENTS */}
         <motion.div 
           variants={itemVars}
           className="relative overflow-hidden p-8 rounded-[2.5rem] bg-white/40 border-l-8 border-amber-500 shadow-xl backdrop-blur-md"

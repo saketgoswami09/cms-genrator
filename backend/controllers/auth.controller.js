@@ -1,105 +1,104 @@
 require("dotenv").config();
-
 const User = require("../models/auth.model");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken"); // 1. Import jwt
+const jwt = require("jsonwebtoken");
+const { z } = require("zod"); // 1. Import Zod
 
+// 2. Define Validation Schemas (Put these at the top)
+const signUpSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").trim(),
+  email: z.string().email("Invalid email format").toLowerCase().trim(),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+const signInSchema = z.object({
+  email: z.string().email("Invalid email format").toLowerCase().trim(),
+  password: z.string().min(1, "Password is required"),
+});
+
+// SIGN IN CONTROLLER
 exports.signIn = async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    // 1. Validation
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
+    // 3. Zod Validation (Faster than manual IF checks)
+    const validation = signInSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ 
+        message: validation.error.errors[0].message 
+      });
     }
 
-    // 2. Check User
-    const user = await User.findOne({ email }).select("+password");
+    const { email, password } = validation.data;
+
+    // 4. Optimized Database Call (.lean() for speed)
+    const user = await User.findOne({ email }).select("+password").lean();
+
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
-    // 3. Check Password
-    
-
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // 4. GENERATE JWT TOKEN
-    // payload: data you want to hide in the token 
-
-    const payload = { userId: user._id, email: user.email };
+    // 5. Generate Token
     const token = jwt.sign(
-      payload,
+      { userId: user._id, email: user.email }, 
       process.env.JWT_SECRET, 
-      { expiresIn: "7d" } 
+      { expiresIn: "7d" }
     );
 
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      createdAt: user.createdAt,
-    };
-
-    // 5. Send Token + User Data
+    // Send response
     return res.status(200).json({
       message: "User signed in successfully",
-      token: token, 
-      user: userResponse,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+      },
     });
   } catch (error) {
     console.error(`Error while signing in: ${error.message}`);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-// Sign up controller
+
+// SIGN UP CONTROLLER
 exports.signUp = async (req, res) => {
   try {
-    console.log("Start processing sign up request");
-    const { name, email, password } = req.body;
-
-    console.log("Received data for:", email);
-
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        message: "Name, email, and password are required",
+    // 6. Zod Validation for Sign Up
+    const validation = signUpSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ 
+        message: validation.error.errors[0].message 
       });
     }
 
-    const existingUser = await User.findOne({ email });
+    const { name, email, password } = validation.data;
 
+    const existingUser = await User.findOne({ email }).select("_id").lean();
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // Hash password
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
-    // Prepare response data (excluding password)
-    const userResponse = {
-      id: newUser._id,
-      name: newUser.name,
-      email: newUser.email,
-      createdAt: newUser.createdAt,
-    };
-
     return res.status(201).json({
       message: "User signed up successfully",
-      user: userResponse,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        createdAt: newUser.createdAt,
+      },
     });
   } catch (error) {
     console.error(`Error while signing up: ${error.message}`);
