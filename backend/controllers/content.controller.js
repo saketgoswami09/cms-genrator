@@ -45,11 +45,21 @@ exports.generateContent = async (req, res) => {
 
     //  Build prompt dynamically
     const prompt = `
+You are an expert AI writing assistant.
+
+Task:
 ${actionConfig.prompt}
 
-Tone: ${selectedTone}
+Tone:
+${selectedTone}
 
-User Content:
+Important:
+- Keep response clear and concise
+- Preserve user's original intent
+- Improve grammar and readability
+- Return only final generated content
+
+User Input:
 ${safeContent}
 `;
 
