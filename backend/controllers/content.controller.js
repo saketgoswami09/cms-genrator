@@ -69,8 +69,7 @@ ${safeContent}
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
-    const outputText =
-      response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+   const outputText = response?.text?.trim?.() || response?.candidates?.[0]?.content?.parts?.map((part) => part.text)?.join("")?.trim();
 
     if (!outputText) {
       return res.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({
