@@ -23,6 +23,7 @@ exports.signIn = async (req, res) => {
     const validation = signInSchema.safeParse(req.body);
     if (!validation.success) {
       return res.status(400).json({ 
+        success: false,
         message: validation.error.errors[0].message 
       });
     }
@@ -33,12 +34,12 @@ exports.signIn = async (req, res) => {
     const user = await User.findOne({ email }).select("+password").lean();
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
     // 5. Generate Token
@@ -50,6 +51,7 @@ exports.signIn = async (req, res) => {
 
     // Send response
     return res.status(200).json({
+      success: true,
       message: "User signed in successfully",
       token,
       user: {
@@ -61,7 +63,7 @@ exports.signIn = async (req, res) => {
     });
   } catch (error) {
     console.error(`Error while signing in: ${error.message}`);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -72,6 +74,7 @@ exports.signUp = async (req, res) => {
     const validation = signUpSchema.safeParse(req.body);
     if (!validation.success) {
       return res.status(400).json({ 
+        success: false,
         message: validation.error.errors[0].message 
       });
     }
@@ -80,7 +83,7 @@ exports.signUp = async (req, res) => {
 
     const existingUser = await User.findOne({ email }).select("_id").lean();
     if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).json({ success: false, message: "Email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -92,6 +95,7 @@ exports.signUp = async (req, res) => {
     });
 
     return res.status(201).json({
+      success: true,
       message: "User signed up successfully",
       user: {
         id: newUser._id,
@@ -102,6 +106,6 @@ exports.signUp = async (req, res) => {
     });
   } catch (error) {
     console.error(`Error while signing up: ${error.message}`);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
