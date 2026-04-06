@@ -2,6 +2,7 @@ require("dotenv").config();
 const cloudinary = require("cloudinary").v2;
 const { InferenceClient } = require("@huggingface/inference");
 const mongoose = require("mongoose");
+const { z } = require("zod"); // 1. Added Zod for consistency
 
 const RESOLUTION_MAP = require("../constant");
 const Image = require("../models/image.model");
@@ -15,26 +16,39 @@ cloudinary.config({
   secure: true,
 });
 
+// 2. Define validation schema
+const generateImageSchema = z.object({
+  prompt: z.string().min(1, "Prompt is required").trim(),
+  resolution: z.string().optional(),
+});
+
 exports.generateImage = async (req, res) => {
   try {
     console.log("AUTH USER 👉", req.user);
 
-    const { prompt, resolution } = req.body;
-
-    //  Validation
-    if (!prompt) {
-      return res.status(400).json({ message: "Prompt is required" });
+    // 3. Apply Zod Validation
+    const validation = generateImageSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        success: false,
+        message: validation.error.errors[0].message,
+      });
     }
 
+    const { prompt, resolution } = validation.data;
+
     if (!process.env.HF_TOKEN) {
-      return res.status(500).json({ message: "HF_TOKEN missing" });
+      return res.status(500).json({ 
+        success: false, 
+        message: "HF_TOKEN missing" 
+      });
     }
 
     // Resolution
     const dimension = RESOLUTION_MAP[resolution] ||
       RESOLUTION_MAP["1024x1024"] || { width: 1024, height: 1024 };
 
-    //  Generate Image
+    // Generate Image
     const imageBlob = await client.textToImage({
       provider: "hf-inference",
       model: "stabilityai/stable-diffusion-xl-base-1.0",
@@ -46,27 +60,29 @@ exports.generateImage = async (req, res) => {
       },
     });
 
-    //  Blob → Buffer
+    // Blob → Buffer
     const buffer = Buffer.from(await imageBlob.arrayBuffer());
 
-    //  Upload to Cloudinary
+    // Upload to Cloudinary
     const uploadResult = await uploadImage(buffer);
 
-    //  Save to MongoDB
+    // Save to MongoDB
     const savedImage = await Image.create({
       prompt,
       image_url: uploadResult?.secure_url,
       user_id: req.user.userId,
     });
 
-    //  Response
+    // 4. Standardized Response
     return res.status(201).json({
+      success: true,
       message: "Image generated successfully",
-      image: savedImage,
+      data: savedImage, 
     });
   } catch (error) {
     console.error("Image generation failed:", error);
     return res.status(500).json({
+      success: false,
       message: "Image generation failed",
       error: error.message,
     });
@@ -85,7 +101,7 @@ function uploadImage(buffer) {
         (error, result) => {
           if (error) return reject(error);
           resolve(result);
-        },
+        }
       )
       .end(buffer);
   });
@@ -128,7 +144,7 @@ exports.history = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to fetch image history",
-      error: error.message,
+      error: error.message, // Optional: You might want to hide this in production
     });
   }
 };
