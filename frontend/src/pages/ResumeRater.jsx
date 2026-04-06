@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Upload, FileText, Sparkles, RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
 import { analyzeResume } from "../../services/resume"; 
@@ -10,10 +10,15 @@ export default function ResumeRater() {
   const [role, setRole] = useState("Software Developer");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  
+  // 1. Added ref to manage the physical file input element
+  const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile?.type !== "application/pdf") {
+      // If invalid, clear the input so they can try again immediately
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return toast.error("Please upload a PDF file");
     }
     setFile(selectedFile);
@@ -34,7 +39,9 @@ export default function ResumeRater() {
       setResult(res.data.data);
       toast.success("Analysis complete!");
     } catch (error) {
-      const msg = error.response?.data?.message || "Analysis failed";
+      // 3. Improved error logging and fallback message
+      console.error("Analysis Error:", error);
+      const msg = error.response?.data?.message || "Analysis failed. Please check your connection.";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -44,11 +51,15 @@ export default function ResumeRater() {
   const handleReset = () => {
     setFile(null);
     setResult(null);
+    // 1. Clear the physical file input so the exact same file can be re-uploaded if needed
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
-      {/* HEADER - Hide header during scanning to focus on animation */}
+      {/* HEADER */}
       {!loading && (
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-xs font-bold mb-4 border border-purple-100 uppercase tracking-widest">
@@ -60,11 +71,7 @@ export default function ResumeRater() {
         </div>
       )}
 
-      {/* LOGIC FLOW: 
-          1. If Result exists -> Show Result
-          2. If Loading -> Show GSAP Scanner
-          3. Else -> Show Upload Form 
-      */}
+      {/* LOGIC FLOW */}
       {result ? (
         <div className="space-y-6">
           <ResumeResult result={result} />
@@ -76,13 +83,18 @@ export default function ResumeRater() {
           </button>
         </div>
       ) : loading ? (
-        // 🌀 THE NEW SCANNER ANIMATION
         <div className="animate-in fade-in zoom-in duration-500">
            <ScanningLoader />
         </div>
       ) : (
-        // 📤 UPLOAD FORM
-        <div className="space-y-6 animate-in fade-in duration-500">
+        // 2. Converted to a <form> for accessibility and "Enter" key submission
+        <form 
+          onSubmit={(e) => { 
+            e.preventDefault(); 
+            handleAnalyze(); 
+          }} 
+          className="space-y-6 animate-in fade-in duration-500"
+        >
           <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 block">Target Job Role</label>
             <input 
@@ -97,6 +109,7 @@ export default function ResumeRater() {
           <div className="relative group">
             <input 
               type="file" 
+              ref={fileInputRef} // <-- Attached ref here
               onChange={handleFileChange} 
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
               accept=".pdf"
@@ -115,13 +128,13 @@ export default function ResumeRater() {
           </div>
 
           <button
-            onClick={handleAnalyze}
+            type="submit" // <-- Changed to type="submit"
             disabled={!file}
             className="w-full h-14 rounded-2xl bg-gray-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-black transition-all active:scale-[0.98] disabled:opacity-50"
           >
             Start AI Analysis
           </button>
-        </div>
+        </form>
       )}
     </div>
   );
