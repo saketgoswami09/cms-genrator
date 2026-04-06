@@ -7,6 +7,7 @@ exports.auth = async (req, res, next) => {
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
+        success: false, // Added for consistency with your controllers
         message: "Authorization token missing or invalid",
       });
     }
@@ -17,6 +18,7 @@ exports.auth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // 3. Attach user data to request
+    // Ensure the properties match what you actually sign in your login controller
     req.user = {
       userId: decoded.userId,
       email: decoded.email,
@@ -27,8 +29,17 @@ exports.auth = async (req, res, next) => {
   } catch (error) {
     console.error("Auth middleware error:", error.message);
 
+    // Distinguish between an expired token and a completely invalid one
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        success: false,
+        message: "Token has expired. Please log in again.",
+      });
+    }
+
     return res.status(401).json({
-      message: "Invalid or expired token",
+      success: false,
+      message: "Invalid authentication token",
     });
   }
 };
