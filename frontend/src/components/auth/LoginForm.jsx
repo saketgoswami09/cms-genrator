@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signIn } from "../../../services/auth";
+import { signIn } from "@/services/auth";
 import { toast } from "react-toastify";
-import {  useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/auth";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react"; // Icons for better UI
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
 const schema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -58,25 +58,25 @@ const LoginForm = ({ cardRef }) => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-[#0a0a0a] px-4 min-h-screen relative overflow-hidden">
+    <div className="flex items-center justify-center bg-[#060a13] px-4 min-h-screen relative overflow-hidden">
       {/* Optional: Background logic matches your theme */}
       <div
         className="absolute inset-0 opacity-10"
         style={{
-          backgroundImage: "radial-gradient(#fff 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)",
           backgroundSize: "24px 24px",
         }}
       ></div>
 
       <div
         ref={cardRef}
-        className="relative w-full max-w-md rounded-3xl bg-white p-8 md:p-10 shadow-2xl"
+        className="relative w-full max-w-md rounded-3xl bg-white/[0.06] backdrop-blur-xl border border-white/10 p-8 md:p-10 shadow-2xl"
       >
         <div className="mb-8">
-          <h2 className="text-3xl font-heading tracking-tight text-gray-900">
+          <h2 className="text-3xl font-heading tracking-tight text-white">
             Welcome back
           </h2>
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 text-white/40">
             Sign in to continue your creative journey.
           </p>
         </div>
@@ -84,17 +84,17 @@ const LoginForm = ({ cardRef }) => {
         <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
           {/* EMAIL */}
           <div className="space-y-1">
-            <label className="text-sm font-semibold text-gray-700 ml-1">
+            <label className="text-sm font-semibold text-white/60 ml-1">
               Email
             </label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 group-focus-within:text-blue-600 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center text-white/30 group-focus-within:text-blue-400 transition-colors">
                 <Mail size={18} />
               </div>
               <input
                 {...register("email")}
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-11 pr-4 py-3 text-sm focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+                className="w-full rounded-xl border border-white/10 bg-white/5 pl-11 pr-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-blue-500 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
               />
             </div>
             {errors.email && (
@@ -106,23 +106,23 @@ const LoginForm = ({ cardRef }) => {
 
           {/* PASSWORD */}
           <div className="space-y-1">
-            <label className="text-sm font-semibold text-gray-700 ml-1">
+            <label className="text-sm font-semibold text-white/60 ml-1">
               Password
             </label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 group-focus-within:text-blue-600 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center text-white/30 group-focus-within:text-blue-400 transition-colors">
                 <Lock size={18} />
               </div>
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password")}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-11 pr-12 py-3 text-sm focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+                className="w-full rounded-xl border border-white/10 bg-white/5 pl-11 pr-12 py-3 text-sm text-white placeholder:text-white/30 focus:border-blue-500 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-white/30 hover:text-white/60 transition-colors"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -137,7 +137,7 @@ const LoginForm = ({ cardRef }) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-xl bg-gray-900 py-3.5 text-sm font-bold text-white shadow-lg hover:bg-black transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
+            className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 py-3.5 text-sm font-bold text-white shadow-lg hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
@@ -150,11 +150,11 @@ const LoginForm = ({ cardRef }) => {
           </button>
         </form>
 
-        <p className="mt-8 text-center text-sm text-gray-500">
+        <p className="mt-8 text-center text-sm text-white/40">
           New here?{" "}
           <span
             onClick={() => navigate("/register")}
-            className="font-bold text-blue-600 hover:underline cursor-pointer transition-all"
+            className="font-bold text-blue-400 hover:underline cursor-pointer transition-all"
           >
             Create an account
           </span>

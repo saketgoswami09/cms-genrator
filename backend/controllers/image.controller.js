@@ -4,7 +4,7 @@ const { InferenceClient } = require("@huggingface/inference");
 const mongoose = require("mongoose");
 const { z } = require("zod"); // 1. Added Zod for consistency
 
-const RESOLUTION_MAP = require("../constant");
+const { RESOLUTION_MAP } = require("../constant");
 const Image = require("../models/image.model");
 
 const client = new InferenceClient(process.env.HF_TOKEN);
@@ -31,7 +31,7 @@ exports.generateImage = async (req, res) => {
     if (!validation.success) {
       return res.status(400).json({
         success: false,
-        message: validation.error.errors[0].message,
+        message: validation.error.issues[0].message,
       });
     }
 
@@ -69,6 +69,7 @@ exports.generateImage = async (req, res) => {
     // Save to MongoDB
     const savedImage = await Image.create({
       prompt,
+      resolution,
       image_url: uploadResult?.secure_url,
       user_id: req.user.userId,
     });
@@ -129,6 +130,7 @@ exports.history = async (req, res) => {
             },
           },
           prompt: 1,
+          resolution: { $ifNull: ["$resolution", "1024x1024"] },
           createdAt: 1,
         },
       },
@@ -144,7 +146,7 @@ exports.history = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to fetch image history",
-      error: error.message, // Optional: You might want to hide this in production
+      error: error.message, 
     });
   }
 };

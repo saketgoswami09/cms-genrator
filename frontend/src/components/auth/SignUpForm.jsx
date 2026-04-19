@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signUp } from "../../../services/auth";
+import { signUp } from "@/services/auth";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/auth";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   User, 
   Mail, 
@@ -85,17 +85,17 @@ const SignUpForm = ({ cardRef }) => {
     // Now returning ONLY the card, allowing the parent (SignUp.jsx) to handle layout.
     <div
       ref={cardRef}
-      className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl shadow-purple-500/10 ring-1 ring-gray-200"
+      className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white/[0.06] backdrop-blur-xl border border-white/10 shadow-2xl"
     >
       {/* Header Gradient Accent */}
-      <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
 
       <div className="p-8 md:p-10">
         <div className="mb-8">
-          <h2 className="text-3xl font-heading tracking-tight text-gray-900">
+          <h2 className="text-3xl font-heading tracking-tight text-white">
             Get Started
           </h2>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-white/40">
             Create your account to unlock full access.
           </p>
         </div>
@@ -104,15 +104,15 @@ const SignUpForm = ({ cardRef }) => {
           
           {/* NAME INPUT */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Full Name</label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-white/30 group-focus-within:text-blue-400 transition-colors">
                 <User size={18} />
               </div>
               <input
                 {...register("name")}
                 placeholder="John Doe"
-                className="block w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-11 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none"
+                className="block w-full rounded-xl border border-white/10 bg-white/5 pl-11 pr-4 py-3 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
               />
             </div>
             {errors.name && <p className="text-xs text-red-500 font-medium ml-1">{errors.name.message}</p>}
@@ -120,15 +120,15 @@ const SignUpForm = ({ cardRef }) => {
 
           {/* EMAIL INPUT */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Email Address</label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-white/30 group-focus-within:text-blue-400 transition-colors">
                 <Mail size={18} />
               </div>
               <input
                 {...register("email")}
                 placeholder="you@example.com"
-                className="block w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-11 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none"
+                className="block w-full rounded-xl border border-white/10 bg-white/5 pl-11 pr-4 py-3 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
               />
             </div>
             {errors.email && <p className="text-xs text-red-500 font-medium ml-1">{errors.email.message}</p>}
@@ -136,21 +136,21 @@ const SignUpForm = ({ cardRef }) => {
 
           {/* PASSWORD INPUT */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Password</label>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Password</label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-white/30 group-focus-within:text-blue-400 transition-colors">
                 <Lock size={18} />
               </div>
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password")}
                 placeholder="Create a strong password"
-                className="block w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-11 pr-12 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none"
+                className="block w-full rounded-xl border border-white/10 bg-white/5 pl-11 pr-12 py-3 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-900 transition-colors"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-white/30 hover:text-white/60 transition-colors"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -158,7 +158,7 @@ const SignUpForm = ({ cardRef }) => {
           </div>
 
           {/* LIVE PASSWORD STRENGTH METER */}
-          <div className="bg-gray-50/80 rounded-xl p-4 grid grid-cols-2 gap-y-2 gap-x-4 border border-gray-100 shadow-inner">
+          <div className="bg-white/5 rounded-xl p-4 grid grid-cols-2 gap-y-2 gap-x-4 border border-white/10">
              {PASS_REQS.map((req, index) => {
                const isValid = req.regex.test(passwordValue);
                return (
@@ -181,7 +181,7 @@ const SignUpForm = ({ cardRef }) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="group relative w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gray-900 hover:bg-black transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-xl active:scale-[0.98]"
+            className="group relative w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110 transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-xl active:scale-[0.98]"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
@@ -197,11 +197,11 @@ const SignUpForm = ({ cardRef }) => {
           </button>
         </form>
 
-        <p className="mt-8 text-center text-sm text-gray-500 font-medium">
+        <p className="mt-8 text-center text-sm text-white/40 font-medium">
           Already have an account?{" "}
           <button 
              onClick={() => navigate("/login")} 
-             className="text-indigo-600 hover:text-indigo-700 font-bold underline-offset-4 hover:underline transition-all"
+             className="text-blue-400 hover:text-blue-300 font-bold underline-offset-4 hover:underline transition-all"
           >
             Sign in
           </button>

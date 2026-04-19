@@ -49,7 +49,7 @@ const AuthHero = () => {
     // Added: h-full (ensure parent is h-screen)
     <div 
       ref={containerRef} 
-      className="relative hidden lg:flex w-1/2 h-full overflow-hidden bg-[#050505]"
+      className="relative hidden lg:flex w-1/2 h-full overflow-hidden bg-[#060a13]"
     >
       
       {/* 🌌 Background Gradient */}

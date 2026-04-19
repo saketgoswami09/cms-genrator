@@ -16,6 +16,10 @@ const imageSchema = new mongoose.Schema(
       required: true,
       type: String,
     },
+    resolution: {
+      type: String,
+      default: "1024x1024",
+    },
   },
   { timestamps: true },
 );

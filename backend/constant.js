@@ -1,6 +1,8 @@
 const RESOLUTION_MAP = {
     "1024x1024": { width: 1024, height: 1024 },
     "512x512": { width: 512, height: 512 },
+    "512x768": { width: 512, height: 768 },
+    "768x512": { width: 768, height: 512 },
     "768x768": { width: 768, height: 768 },
     "1024x768": { width: 1024, height: 768 },
     "768x1024": { width: 768, height: 1024 },
@@ -81,7 +83,7 @@ const HTTP_STATUS = {
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   NOT_FOUND: 404,
-  INTERVAL_SERVER_ERROR: 500,
+  INTERNAL_SERVER_ERROR: 500,
   SERVICE_UNAVAILABLE: 503,
 };
 

@@ -1,13 +1,15 @@
-import React, { useState } from "react"; // Added useState
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/auth";
+import { useAuth } from "@/hooks/useAuth";
 import { Sparkles, Image as ImageIcon, LogOut, Menu, X, Info, BarChart } from "lucide-react";
+import gsap from "gsap";
 
 export default function Nav() {
   const navigate = useNavigate();
   const { isAuthenticated, name: userName, logout } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
-  React.useEffect(() => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuLinksRef = useRef(null);
+  useEffect(() => {
   if (isMenuOpen) {
     document.body.style.overflow = 'hidden';
   } else {
@@ -15,6 +17,17 @@ export default function Nav() {
   }
   return () => { document.body.style.overflow = 'unset'; };
 }, [isMenuOpen]);
+
+  // GSAP staggered links on menu open
+  useEffect(() => {
+    if (isMenuOpen && menuLinksRef.current) {
+      gsap.fromTo(
+        menuLinksRef.current.querySelectorAll(".mobile-link"),
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: "power3.out", delay: 0.2 }
+      );
+    }
+  }, [isMenuOpen]);
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -113,12 +126,12 @@ export default function Nav() {
         }`}
       >
         {/* 1. COMPLETELY SOLID BACKGROUND */}
-        <div className="absolute inset-0 bg-white">
-          {/* Dotted Pattern Layer */}
+        <div className="absolute inset-0 bg-[#060a13]">
+          {/* Dotted Pattern */}
           <div
-            className="absolute inset-0 opacity-[0.4]"
+            className="absolute inset-0 opacity-[0.08]"
             style={{
-              backgroundImage: "radial-gradient(#CBD5E1 1px, transparent 1px)",
+              backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)",
               backgroundSize: "24px 24px",
             }}
           />
@@ -127,20 +140,18 @@ export default function Nav() {
         {/* 2. MENU CONTENT CONTAINER */}
         <div className="relative h-full flex flex-col items-center justify-center p-8">
           {/* BRAND - Adding it back in the menu for orientation */}
-          <div className="absolute top-10 left-10 text-xl font-bold tracking-tighter text-gray-900">
+          <div className="absolute top-10 left-10 text-xl font-bold tracking-tighter text-white">
             Creatdiv.
           </div>
 
-          {/* CLOSE BUTTON - Solid black for contrast */}
           <button
             onClick={() => setIsMenuOpen(false)}
-            className="absolute top-8 right-8 p-3 text-gray-900 bg-gray-100 rounded-full active:scale-90 transition-all"
+            className="absolute top-8 right-8 p-3 text-white bg-white/10 rounded-full active:scale-90 transition-all border border-white/10"
           >
             <X size={28} />
           </button>
 
-          {/* NAVIGATION LINKS */}
-          <div className="flex flex-col items-center gap-10 text-center">
+          <div ref={menuLinksRef} className="flex flex-col items-center gap-10 text-center">
             {[
               { name: "Home", path: "/" },
               { name: "Content Engine", path: "/content" },
@@ -151,7 +162,7 @@ export default function Nav() {
                 key={index}
                 to={link.path}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-4xl font-black tracking-tighter text-gray-900 active:text-blue-600 transition-colors"
+                className="mobile-link text-4xl font-black tracking-tighter text-white active:text-purple-400 transition-colors"
               >
                 {link.name}
               </Link>
@@ -159,10 +170,10 @@ export default function Nav() {
 
             {isAuthenticated && (
               <div className="mt-6 flex flex-col items-center gap-6">
-                <div className="h-[2px] w-8 bg-gray-200" />
+                <div className="h-[2px] w-8 bg-white/10" />
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 text-red-500 text-lg font-bold"
+                  className="mobile-link flex items-center gap-2 text-red-400 text-lg font-bold"
                 >
                   <LogOut size={20} /> Logout
                 </button>
@@ -171,7 +182,7 @@ export default function Nav() {
           </div>
 
           {/* BOTTOM INFO */}
-          <div className="absolute bottom-10 text-gray-300 text-[10px] font-bold uppercase tracking-[0.4em]">
+          <div className="absolute bottom-10 text-white/10 text-[10px] font-bold uppercase tracking-[0.4em]">
             Built with Creatdiv AI
           </div>
         </div>

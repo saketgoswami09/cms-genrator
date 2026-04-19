@@ -1,3 +1,7 @@
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Card from "../components/Card";
 import {
   FileText,
@@ -7,7 +11,10 @@ import {
   PenTool,
   History,
   Sparkles,
+  ArrowLeft,
 } from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const contentFeatures = [
   {
@@ -62,51 +69,123 @@ const contentFeatures = [
 ];
 
 export default function Content() {
-  return (
-    <div className="min-h-screen bg-[#F9FAFB] relative overflow-hidden">
-      {/* 🧬 Background Mesh (Subtle UI Touch) */}
-      <div className="absolute top-0 right-0 w-125 h-125 bg-purple-50 rounded-full blur-[120px] -z-10 opacity-60" />
-      <div className="absolute bottom-0 left-0 w-125 h-125 bg-blue-50 rounded-full blur-[120px] -z-10 opacity-60" />
+  const pageRef = useRef(null);
 
-      <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
-        {/* HEADER SECTION - Refined for Readability */}
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      // Header entrance
+      tl.from(".content-badge", {
+        y: 20,
+        opacity: 0,
+        duration: 0.6,
+      });
+
+      tl.from(
+        ".content-title",
+        { y: 30, opacity: 0, duration: 0.8 },
+        "-=0.4"
+      );
+
+      tl.from(
+        ".content-subtitle",
+        { y: 20, opacity: 0, duration: 0.6 },
+        "-=0.5"
+      );
+
+      // Cards stagger
+      tl.from(
+        ".content-card",
+        {
+          y: 50,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.1,
+        },
+        "-=0.3"
+      );
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Footer banner scroll animation
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".content-footer-banner", {
+        scrollTrigger: {
+          trigger: ".content-footer-banner",
+          start: "top 85%",
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div
+      ref={pageRef}
+      className="min-h-screen bg-[#060a13] text-white relative overflow-hidden"
+    >
+      {/* Background glow */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[150px] -z-0 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-[150px] -z-0 pointer-events-none" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-16 md:py-24">
+        {/* Back link */}
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-sm font-medium text-white/40 hover:text-white/70 transition-colors mb-12"
+        >
+          <ArrowLeft size={16} /> Back to Home
+        </Link>
+
+        {/* HEADER */}
         <div className="text-center mb-20 space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50/80 backdrop-blur-md text-indigo-700 text-xs font-bold border border-indigo-100/50 shadow-sm uppercase tracking-widest">
+          <div className="content-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-indigo-400 text-xs font-bold uppercase tracking-[0.2em]">
             <Sparkles size={14} /> AI Writing Assistant
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-black text-gray-900 tracking-tighter leading-[0.9]">
+          <h1 className="content-title text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
             Content <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-600 via-purple-600 to-blue-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-blue-400">
               Engine
             </span>
           </h1>
 
-          <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-medium">
-            Refine, expand, and generate high-performance copy using our suite
-            of <span className="text-gray-900">advanced neural models</span>.
+          <p className="content-subtitle text-white/40 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-medium">
+            Refine, expand, and generate high-performance copy using our suite of{" "}
+            <span className="text-white/70">advanced neural models</span>.
           </p>
         </div>
 
-        {/* DYNAMIC GRID */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* CARD GRID */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {contentFeatures.map((feature) => (
-            <Card key={feature.id} feature={feature} />
+            <div key={feature.id} className="content-card">
+              <Card feature={feature} />
+            </div>
           ))}
         </div>
 
-        {/* INFO FOOTER SECTION */}
-        <div className="mt-24 relative overflow-hidden rounded-4xl bg-gray-900 p-8 md:p-12 text-white">
-          <div className="absolute top-0 right-0 -m-12 opacity-10">
+        {/* FOOTER BANNER */}
+        <div className="content-footer-banner mt-24 relative overflow-hidden rounded-[2rem] bg-white/5 backdrop-blur-sm border border-white/10 p-8 md:p-12">
+          <div className="absolute top-0 right-0 -m-12 opacity-5">
             <FileText size={300} />
           </div>
 
           <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-4">
+              <h2 className="text-3xl font-bold mb-4 text-white">
                 Precision Editing. <br /> Infinite Possibilities.
               </h2>
-              <p className="text-gray-400 text-lg leading-relaxed">
+              <p className="text-white/40 text-base leading-relaxed">
                 Our content tools don't just replace words; they understand
                 context, intent, and tone to ensure your voice remains authentic
                 while becoming more professional.
@@ -124,7 +203,9 @@ export default function Content() {
                   className="flex items-center gap-2 bg-white/5 border border-white/10 p-4 rounded-xl"
                 >
                   <div className={`w-2 h-2 rounded-full ${tag.color}`} />
-                  <span className="text-sm font-medium">{tag.label}</span>
+                  <span className="text-sm font-medium text-white/70">
+                    {tag.label}
+                  </span>
                 </div>
               ))}
             </div>

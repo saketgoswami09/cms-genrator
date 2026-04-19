@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   ShieldCheck,
   Zap,
@@ -87,11 +87,11 @@ export const ResumeResult = ({ result }) => {
         {/* LEFT: MAIN SCORE (Radial Gauge) */}
         <motion.div
           variants={itemVars}
-          className="md:col-span-2 relative overflow-hidden rounded-[2.5rem] bg-white/60 border border-white/50 backdrop-blur-xl shadow-xl p-8 flex flex-col items-center justify-center text-center group hover:shadow-2xl transition-all duration-500"
+          className="md:col-span-2 relative overflow-hidden rounded-[2.5rem] bg-white/[0.04] border border-white/10 backdrop-blur-xl shadow-xl p-8 flex flex-col items-center justify-center text-center group hover:shadow-2xl transition-all duration-500"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 group-hover:opacity-100 transition-opacity" />
 
-          <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">
+          <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white/40 mb-4">
             AI Quality Index
           </h3>
 
@@ -129,11 +129,11 @@ export const ResumeResult = ({ result }) => {
               >
                 {result.score}
               </motion.span>
-              <span className="text-sm font-medium text-gray-400">/ 100</span>
+              <span className="text-sm font-medium text-white/40">/ 100</span>
             </div>
           </div>
 
-          <div className="mt-4 px-5 py-2 bg-purple-50 rounded-full text-purple-700 text-xs font-bold border border-purple-100 flex items-center gap-2">
+          <div className="mt-4 px-5 py-2 bg-purple-500/10 rounded-full text-purple-400 text-xs font-bold border border-purple-500/20 flex items-center gap-2">
             <Award size={14} /> Top {100 - (result.score || 50)}% of candidates
           </div>
         </motion.div>
@@ -141,17 +141,17 @@ export const ResumeResult = ({ result }) => {
         {/* RIGHT: SKILL RADAR (Spider Chart) */}
         <motion.div
           variants={itemVars}
-          className="md:col-span-3 relative overflow-hidden rounded-[2.5rem] bg-white/60 border border-white/50 backdrop-blur-xl shadow-xl p-6 flex flex-col"
+          className="md:col-span-3 relative overflow-hidden rounded-[2.5rem] bg-white/[0.04] border border-white/10 backdrop-blur-xl shadow-xl p-6 flex flex-col"
         >
           <div className="absolute top-0 right-0 p-8 opacity-5">
             <FileText size={150} />
           </div>
 
           <div className="mb-2 pl-4 z-10">
-            <h3 className="text-xl font-bold text-gray-800">
+            <h3 className="text-xl font-bold text-white">
               Performance Breakdown
             </h3>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-white/40">
               Analysis of key recruiting metrics
             </p>
           </div>
@@ -159,10 +159,10 @@ export const ResumeResult = ({ result }) => {
           <div className="flex-1 min-h-[300px] z-10">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                <PolarGrid stroke="#e5e7eb" />
+                <PolarGrid stroke="rgba(255,255,255,0.1)" />
                 <PolarAngleAxis
                   dataKey="subject"
-                  tick={{ fill: "#6b7280", fontSize: 12, fontWeight: "bold" }}
+                  tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 12, fontWeight: "bold" }}
                 />
                 <PolarRadiusAxis
                   angle={30}
@@ -189,9 +189,9 @@ export const ResumeResult = ({ result }) => {
         {/* ✅ STRENGTHS */}
         <motion.div
           variants={itemVars}
-          className="relative p-8 rounded-[2rem] bg-emerald-50/40 border border-emerald-100 backdrop-blur-sm"
+          className="relative p-8 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/20 backdrop-blur-sm"
         >
-          <h3 className="flex items-center gap-2 font-bold text-emerald-800 mb-6 text-lg">
+          <h3 className="flex items-center gap-2 font-bold text-emerald-400 mb-6 text-lg">
             <ShieldCheck className="text-emerald-500" /> What You Did Well
           </h3>
           <ul className="space-y-4">
@@ -205,7 +205,7 @@ export const ResumeResult = ({ result }) => {
                   size={18}
                   className="mt-1 text-emerald-500 shrink-0"
                 />
-                <p className="text-emerald-900/80 text-sm font-medium leading-relaxed">
+                <p className="text-emerald-200/80 text-sm font-medium leading-relaxed">
                   {cleanText(s)}
                 </p>
               </motion.li>
@@ -216,17 +216,17 @@ export const ResumeResult = ({ result }) => {
         {/* 🚀 IMPROVEMENTS & LATEX TOGGLE */}
         <motion.div
           variants={itemVars}
-          className="relative p-8 rounded-[2rem] bg-amber-50/40 border border-amber-100 backdrop-blur-sm flex flex-col"
+          className="relative p-8 rounded-[2rem] bg-amber-500/5 border border-amber-500/20 backdrop-blur-sm flex flex-col"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="flex items-center gap-2 font-bold text-amber-800 text-lg">
+            <h3 className="flex items-center gap-2 font-bold text-amber-400 text-lg">
               <Zap className="text-amber-500" /> Actionable Improvements
             </h3>
 
             {/* Toggle Button */}
             <button
               onClick={() => setShowLatex(!showLatex)}
-              className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-amber-800 bg-amber-200/50 hover:bg-amber-200 rounded-lg transition-colors border border-amber-200"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 rounded-lg transition-colors border border-amber-500/20"
             >
               <Code size={14} />
               {showLatex ? "Show List" : "Get LaTeX"}
@@ -274,7 +274,7 @@ export const ResumeResult = ({ result }) => {
                 {result.improvements?.map((imp, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <div className="mt-2 size-1.5 rounded-full bg-amber-500 shrink-0" />
-                    <p className="text-amber-900/80 text-sm font-medium leading-relaxed">
+                    <p className="text-amber-200/80 text-sm font-medium leading-relaxed">
                       {cleanText(imp)}
                     </p>
                   </li>
@@ -288,7 +288,7 @@ export const ResumeResult = ({ result }) => {
       {/* 💡 ATS TIPS FOOTER */}
       <motion.div
         variants={itemVars}
-        className="p-8 rounded-[2rem] bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-2xl"
+        className="p-8 rounded-[2rem] bg-white/[0.04] border border-white/10 text-white shadow-2xl"
       >
         <div className="flex items-center gap-3 mb-6">
           <Info className="text-blue-400" />

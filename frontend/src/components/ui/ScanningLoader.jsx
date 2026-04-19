@@ -56,13 +56,13 @@ const ScanningLoader = () => {
     <div ref={containerRef} className="flex flex-col items-center justify-center py-20">
       
       {/* 📄 DOCUMENT CONTAINER */}
-      <div className="relative w-64 h-80 rounded-3xl bg-white/40 border border-white/50 backdrop-blur-xl shadow-2xl overflow-hidden flex items-center justify-center mb-8">
+      <div className="relative w-64 h-80 rounded-3xl bg-white/[0.04] border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden flex items-center justify-center mb-8">
         
         {/* Static Background Pattern */}
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#8b5cf6_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
         {/* Central Icon */}
-        <div className="relative z-10 text-gray-300">
+        <div className="relative z-10 text-white/10">
            <FileText size={80} strokeWidth={1} />
         </div>
 
@@ -79,16 +79,16 @@ const ScanningLoader = () => {
 
       {/* 🧠 DYNAMIC TEXT */}
       <div className="flex items-center gap-3">
-        <BrainCircuit className="text-purple-600 animate-pulse" size={20} />
+        <BrainCircuit className="text-purple-400 animate-pulse" size={20} />
         <h3 
           ref={textRef} 
-          className="text-lg font-bold text-gray-700 tracking-wide w-64 text-center"
+          className="text-lg font-bold text-white tracking-wide w-64 text-center"
         >
           {loadingText}
         </h3>
       </div>
       
-      <p className="text-xs text-gray-400 mt-2 font-medium">Powered by Creatdiv</p>
+      <p className="text-xs text-white/30 mt-2 font-medium">Powered by Creatdiv</p>
     </div>
   );
 };

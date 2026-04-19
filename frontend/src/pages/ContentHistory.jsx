@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useRef, useEffect } from "react";
+import { useState, useLayoutEffect, useRef, useEffect } from "react";
 import gsap from "gsap";
 import {
   Copy,
@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import {
   getContentHistory,
   deleteContentHistory, 
-} from "../../services/content";
+} from "@/services/content";
 
 // 🔥 Accept refreshTrigger from parent
 export default function ContentHistory({ refreshTrigger }) {
@@ -46,7 +46,7 @@ export default function ContentHistory({ refreshTrigger }) {
           ...item,
           original: item.input_content || item.original,
           result: item.output_content || item.result,
-          tone: item.tone ,
+          tone: item.tone || "Professional",
         }));
 
         setHistory(formattedData);
@@ -58,7 +58,7 @@ export default function ContentHistory({ refreshTrigger }) {
       }
     }
     fetchHistory();
-  }, [refreshTrigger]);
+  }, [history.length, refreshTrigger]);
 
   // ✅ ANIMATION
   useLayoutEffect(() => {
@@ -117,7 +117,7 @@ export default function ContentHistory({ refreshTrigger }) {
 
   if (loading && history.length === 0) {
     return (
-      <div className="flex items-center justify-center py-20 text-gray-400 animate-pulse">
+      <div className="flex items-center justify-center py-20 text-white/30 animate-pulse">
         Loading history...
       </div>
     );
@@ -127,23 +127,23 @@ export default function ContentHistory({ refreshTrigger }) {
     <div className="w-full px-4 font-sans relative">
       <div ref={containerRef} className="relative z-10 max-w-5xl mx-auto">
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 border-b border-gray-200 pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 border-b border-white/10 pb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <FileText className="text-blue-600" size={28} />
+            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+              <FileText className="text-blue-400" size={28} />
               Content History
             </h1>
-            <p className="mt-2 text-gray-500">
+            <p className="mt-2 text-white/40">
               Your past AI rewrites and transformations.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-white p-1 rounded-lg border border-gray-200 shadow-sm">
-            <Filter size={14} className="text-gray-400 ml-2" />
+          <div className="flex items-center gap-2 bg-white/5 p-1 rounded-lg border border-white/10">
+            <Filter size={14} className="text-white/30 ml-2" />
             <select
               value={filterTone}
               onChange={(e) => setFilterTone(e.target.value)}
-              className="bg-transparent text-sm font-medium text-gray-700 py-1.5 pr-8 pl-1 outline-none cursor-pointer hover:text-gray-900"
+              className="bg-transparent text-sm font-medium text-white py-1.5 pr-8 pl-1 outline-none cursor-pointer"
             >
               {uniqueTones.map((tone) => (
                 <option key={tone} value={tone}>
@@ -160,7 +160,7 @@ export default function ContentHistory({ refreshTrigger }) {
             {filteredHistory.map((item) => (
               <div
                 key={item._id}
-                className="history-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-blue-100 transition-all duration-300"
+                className="history-card bg-white/[0.04] rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
               >
                 {/* META */}
                 <div className="flex justify-between mb-6">
@@ -172,7 +172,7 @@ export default function ContentHistory({ refreshTrigger }) {
                     >
                       {item.tone}
                     </span>
-                    <span className="flex items-center gap-1 text-xs text-gray-400">
+                    <span className="flex items-center gap-1 text-xs text-white/30">
                       <Calendar size={12} />
                       {new Date(item.createdAt).toLocaleDateString()}
                     </span>
@@ -180,7 +180,7 @@ export default function ContentHistory({ refreshTrigger }) {
 
                   <button
                     onClick={() => handleDelete(item._id)}
-                    className="text-gray-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+                    className="text-white/20 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-full transition-colors"
                     title="Delete"
                   >
                     <Trash2 size={16} />
@@ -190,32 +190,32 @@ export default function ContentHistory({ refreshTrigger }) {
                 {/* CONTENT */}
                 <div className="grid md:grid-cols-2 gap-6 relative items-stretch">
                   {/* ORIGINAL */}
-                  <div className="relative p-4 rounded-xl bg-gray-50 border border-gray-100">
-                    <div className="absolute -top-3 left-4 px-2 bg-gray-50 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+                  <div className="relative p-4 rounded-xl bg-white/5 border border-white/10">
+                    <div className="absolute -top-3 left-4 px-2 bg-[#060a13] text-[10px] font-semibold text-white/30 uppercase tracking-widest">
                       Original
                     </div>
-                    <p className="text-sm text-gray-500 font-mono leading-relaxed mt-2 whitespace-pre-wrap">
+                    <p className="text-sm text-white/40 font-mono leading-relaxed mt-2 whitespace-pre-wrap">
                       “{item.original}”
                     </p>
                   </div>
 
                   {/* ARROW (Desktop) */}
                   <div className="hidden md:flex flex-col justify-center items-center absolute left-1/2 -translate-x-1/2 h-full top-0 pointer-events-none opacity-20">
-                    <ArrowRight size={24} className="text-gray-400" />
+                    <ArrowRight size={24} className="text-white/10" />
                   </div>
 
                   {/* RESULT */}
-                  <div className="relative p-4 rounded-xl bg-blue-50/50 border border-blue-100">
-                    <div className="absolute -top-3 left-4 px-2 bg-blue-50 text-[10px] font-semibold text-blue-500 uppercase tracking-widest flex items-center gap-1">
+                  <div className="relative p-4 rounded-xl bg-blue-500/5 border border-blue-500/20">
+                    <div className="absolute -top-3 left-4 px-2 bg-[#060a13] text-[10px] font-semibold text-blue-400 uppercase tracking-widest flex items-center gap-1">
                       <Sparkles size={10} /> Result
                     </div>
-                    <p className="text-base text-gray-800 font-medium leading-relaxed mt-2 whitespace-pre-wrap">
+                    <p className="text-base text-white/80 font-medium leading-relaxed mt-2 whitespace-pre-wrap">
                       “{item.result}”
                     </p>
 
                     <button
                       onClick={() => handleCopy(item.result, item._id)}
-                      className="absolute bottom-3 right-3 p-2 bg-white rounded-lg shadow-sm border border-gray-200 text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-all"
+                      className="absolute bottom-3 right-3 p-2 bg-white/5 rounded-lg border border-white/10 text-white/40 hover:text-blue-400 hover:border-blue-500/30 transition-all"
                       title="Copy"
                     >
                       {copiedId === item._id ? (
@@ -231,13 +231,13 @@ export default function ContentHistory({ refreshTrigger }) {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <Quote size={32} className="text-gray-300" />
+            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4">
+              <Quote size={32} className="text-white/10" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-white">
               No history yet
             </h3>
-            <p className="text-gray-500 mt-1">
+            <p className="text-white/40 mt-1">
               Generate content to see it here.
             </p>
           </div>
@@ -251,14 +251,14 @@ export default function ContentHistory({ refreshTrigger }) {
 function getToneColor(tone) {
   switch (tone) {
     case "Professional":
-      return "bg-blue-100 text-blue-700";
+      return "bg-blue-500/10 text-blue-400";
     case "Casual":
-      return "bg-orange-100 text-orange-700";
+      return "bg-orange-500/10 text-orange-400";
     case "Enthusiastic":
-      return "bg-green-100 text-green-700";
+      return "bg-green-500/10 text-green-400";
     case "Concise":
-      return "bg-purple-100 text-purple-700";
+      return "bg-purple-500/10 text-purple-400";
     default:
-      return "bg-gray-100 text-gray-700";
+      return "bg-white/10 text-white/60";
   }
 }

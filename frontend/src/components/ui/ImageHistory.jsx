@@ -5,8 +5,8 @@ import {
   Image as ImageIcon, X, Clock, ExternalLink 
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { imageHistory } from "../../../services/image";
-import { downloadImage } from "../../utils/global"; 
+import { imageHistory } from "@/services/image";
+import { downloadImage } from "@/utils/global";
 
 // --- HELPER: Group data by date logic remains the same ---
 const groupHistoryByDate = (history) => {
@@ -22,7 +22,7 @@ const groupHistoryByDate = (history) => {
     else if (date > new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)) groups["Past 7 Days"].push(item);
     else groups.Older.push(item);
   });
-  return Object.entries(groups).filter(([_, items]) => items.length > 0);
+  return Object.entries(groups).filter(([, items]) => items.length > 0);
 };
 
 export default function ImageHistory({ refreshTrigger }) {
@@ -76,12 +76,12 @@ export default function ImageHistory({ refreshTrigger }) {
       <div ref={containerRef} className="mx-auto max-w-7xl px-4">
         
         {/* HEADER */}
-        <div className="mb-10 flex items-center justify-between border-b border-gray-100 pb-6">
-            <h2 className="text-2xl font-black text-gray-900 flex items-center gap-3 tracking-tighter">
-                <Clock className="text-purple-600" size={28} />
+        <div className="mb-10 flex items-center justify-between border-b border-white/10 pb-6">
+            <h2 className="text-2xl font-black text-white flex items-center gap-3 tracking-tighter">
+                <Clock className="text-purple-400" size={28} />
                 Creatdiv Archive
             </h2>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">
+            <p className="text-xs font-bold text-white/30 uppercase tracking-[0.2em]">
                 {history.length} Creations
             </p>
         </div>
@@ -90,7 +90,7 @@ export default function ImageHistory({ refreshTrigger }) {
         {loading && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="aspect-square rounded-4xl bg-gray-100 animate-pulse" />
+              <div key={i} className="aspect-square rounded-4xl bg-white/5 animate-pulse" />
             ))}
           </div>
         )}
@@ -98,13 +98,13 @@ export default function ImageHistory({ refreshTrigger }) {
         {/* LISTING */}
         {!loading && groupedHistory.map(([label, items]) => (
           <div key={label} className="mb-16">
-            <h3 className="mb-6 text-[10px] font-black uppercase tracking-[0.3em] text-purple-500/60 pl-2">
+            <h3 className="mb-6 text-[10px] font-black uppercase tracking-[0.3em] text-purple-400/60 pl-2">
               {label}
             </h3>
             
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {items.map((item) => (
-                <div key={item.id} className="history-card group relative aspect-square rounded-4xl overflow-hidden bg-white shadow-sm ring-1 ring-gray-200 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
+                <div key={item.id} className="history-card group relative aspect-square rounded-4xl overflow-hidden bg-white/5 shadow-sm ring-1 ring-white/10 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
                   
                   {/* IMAGE */}
                   <img src={item.url} alt="AI" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />

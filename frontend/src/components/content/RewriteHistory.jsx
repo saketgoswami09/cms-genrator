@@ -1,21 +1,14 @@
-import React, { useState, useLayoutEffect, useRef, useEffect } from "react";
+import { useState, useLayoutEffect, useRef, useEffect } from "react";
 import gsap from "gsap";
 import {
-  Copy,
-  Trash2,
-  FileText,
-  ArrowRight,
-  Calendar,
-  Check,
-  Filter,
-  Sparkles,
-  Quote,
+  Copy, Trash2, FileText, ArrowRight,
+  Calendar, Check, Filter, Sparkles, Quote,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import {
   getContentHistory,
-  deleteContentHistory, // Make sure this is exported from your api service
-} from "../../../services/content";
+  deleteContentHistory,
+} from "@/services/content";
 
 // 🔥 Accept refreshTrigger from parent
 export default function RewriteHistory({ refreshTrigger }) {
@@ -58,7 +51,7 @@ export default function RewriteHistory({ refreshTrigger }) {
       }
     }
     fetchHistory();
-  }, [refreshTrigger]);
+  }, [history.length, refreshTrigger]);
 
   // ✅ ANIMATION
   useLayoutEffect(() => {

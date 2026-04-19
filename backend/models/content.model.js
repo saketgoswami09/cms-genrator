@@ -23,7 +23,13 @@ const contentSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["rewrite", "shorten", "expand", "article"],
+      enum: ["rewrite", "shorten", "expand", "article", "seo-content"],
+    },
+
+    tone: {
+      type: String,
+      default: "Professional",
+      trim: true,
     },
   },
   { timestamps: true },
