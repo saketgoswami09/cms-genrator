@@ -2,7 +2,7 @@ require("dotenv").config();
 const User = require("../models/auth.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { z } = require("zod"); // 1. Import Zod
+const { z } = require("zod"); 
 
 // 2. Define Validation Schemas 
 const signUpSchema = z.object({
@@ -24,7 +24,7 @@ exports.signIn = async (req, res) => {
     if (!validation.success) {
       return res.status(400).json({ 
         success: false,
-        message: validation.error.errors[0].message 
+        message: validation.error.issues[0].message 
       });
     }
 
@@ -75,7 +75,7 @@ exports.signUp = async (req, res) => {
     if (!validation.success) {
       return res.status(400).json({ 
         success: false,
-        message: validation.error.errors[0].message 
+        message: validation.error.issues[0].message 
       });
     }
 
